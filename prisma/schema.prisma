@@ -1,0 +1,349 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String           @id @default(cuid())
+  email            String           @unique
+  name             String?
+  image            String?
+  password         String?
+  role             String           @default("USER")
+  emailVerified    DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  addOnSelections  AddOnSelection[]
+  coupleAsPartner2 Couple?          @relation("Partner2")
+  coupleAsPartner1 Couple?          @relation("Partner1")
+
+  @@map("users")
+}
+
+model Couple {
+  id            String         @id @default(cuid())
+  name          String?
+  partner1Id    String         @unique
+  partner2Id    String         @unique
+  anniversary   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  bookings      Booking[]
+  budgetBuckets BudgetBucket[]
+  countdowns    Countdown[]
+  partner2      User           @relation("Partner2", fields: [partner2Id], references: [id])
+  partner1      User           @relation("Partner1", fields: [partner1Id], references: [id])
+
+  @@map("couples")
+}
+
+model TravelProduct {
+  id                String             @id @default(cuid())
+  externalId        String
+  source            String
+  productType       String
+  name              String
+  description       String?
+  destination       String
+  country           String?
+  latitude          Float?
+  longitude         Float?
+  imageUrl          String?
+  galleryUrls       String?
+  starRating        Float?
+  reviewScore       Float?
+  reviewCount       Int?
+  amenities         String?
+  romanceScore      Float              @default(0)
+  romanceTags       String?
+  curatedAt         DateTime?
+  basePrice         Int
+  currency          String             @default("USD")
+  priceUpdatedAt    DateTime           @default(now())
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  packageComponents PackageComponent[]
+  priceHistory      PriceSnapshot[]
+
+  @@unique([externalId, source, productType])
+  @@map("travel_products")
+}
+
+model PriceSnapshot {
+  id            String        @id @default(cuid())
+  productId     String
+  price         Int
+  currency      String        @default("USD")
+  checkInDate   DateTime?
+  checkOutDate  DateTime?
+  departureDate DateTime?
+  adults        Int           @default(2)
+  source        String
+  fetchedAt     DateTime      @default(now())
+  product       TravelProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("price_snapshots")
+}
+
+model BudgetTier {
+  id                   String            @id @default(cuid())
+  slug                 String            @unique
+  name                 String
+  description          String?
+  minPrice             Int
+  maxPrice             Int
+  defaultMonths        Int               @default(24)
+  minMonths            Int               @default(12)
+  maxMonths            Int               @default(48)
+  destinations         String?
+  hotelStars           Float?
+  inflationBuffer      Float             @default(0.15)
+  repriceTriggerMonths Int               @default(12)
+  imageUrl             String?
+  accentColor          String?
+  isActive             Boolean           @default(true)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  buckets              BudgetBucket[]
+  packages             PackageTemplate[]
+
+  @@map("budget_tiers")
+}
+
+model BudgetBucket {
+  id                     String             @id @default(cuid())
+  coupleId               String
+  tierId                 String
+  targetAmount           Int
+  protectedTarget        Int                @default(0)
+  savedAmount            Int                @default(0)
+  monthlyAmount          Int
+  months                 Int
+  startDate              DateTime
+  preferredDestinations  String?
+  preferredDates         String?
+  status                 String             @default("SAVING")
+  inflationBufferApplied Float              @default(0.15)
+  repricedAt             DateTime?
+  actualBookedPrice      Int?
+  priceDifference        Int                @default(0)
+  bookingWindowOpens     DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  alerts                 AlertQueue[]
+  tier                   BudgetTier         @relation(fields: [tierId], references: [id])
+  couple                 Couple             @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  generatedPackages      GeneratedPackage[]
+
+  @@map("budget_buckets")
+}
+
+model PackageTemplate {
+  id                String             @id @default(cuid())
+  slug              String             @unique
+  title             String
+  subtitle          String?
+  description       String?
+  destination       String
+  image             String?
+  gallery           String?
+  basePrice         Int
+  duration          Int
+  category          String             @default("HONEYMOON")
+  isActive          Boolean            @default(true)
+  isPremium         Boolean            @default(false)
+  tierId            String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  generatedPackages GeneratedPackage[]
+  components        PackageComponent[]
+  tier              BudgetTier?        @relation(fields: [tierId], references: [id])
+
+  @@map("package_templates")
+}
+
+model PackageComponent {
+  id            String          @id @default(cuid())
+  templateId    String
+  productId     String
+  componentType String
+  dayOffset     Int?
+  durationDays  Int?
+  isOptional    Boolean         @default(false)
+  product       TravelProduct   @relation(fields: [productId], references: [id])
+  template      PackageTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("package_components")
+}
+
+model GeneratedPackage {
+  id                String           @id @default(cuid())
+  templateId        String?
+  bucketId          String?
+  assembledProducts String?
+  totalPrice        Int
+  status            String           @default("DRAFT")
+  presentedAt       DateTime?
+  acceptedAt        DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  bucket            BudgetBucket?    @relation(fields: [bucketId], references: [id])
+  template          PackageTemplate? @relation(fields: [templateId], references: [id])
+
+  @@map("generated_packages")
+}
+
+model AlertQueue {
+  id           String        @id @default(cuid())
+  bucketId     String?
+  alertType    String
+  title        String
+  message      String
+  payload      String?
+  scheduledFor DateTime      @default(now())
+  sentAt       DateTime?
+  status       String        @default("PENDING")
+  channel      String        @default("IN_APP")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  bucket       BudgetBucket? @relation(fields: [bucketId], references: [id], onDelete: Cascade)
+
+  @@map("alert_queue")
+}
+
+model Package {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  subtitle         String?
+  description      String?
+  destination      String
+  image            String?
+  gallery          String?
+  basePrice        Int
+  duration         Int
+  category         String    @default("HONEYMOON")
+  isActive         Boolean   @default(true)
+  isPremium        Boolean   @default(false)
+  minPaymentMonths Int       @default(12)
+  maxPaymentMonths Int       @default(48)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  addOns           AddOn[]
+  bookings         Booking[]
+
+  @@map("packages")
+}
+
+model AddOn {
+  id           String           @id @default(cuid())
+  packageId    String
+  title        String
+  description  String?
+  price        Int
+  duration     Int?
+  image        String?
+  category     String           @default("EXPERIENCE")
+  dayOffset    Int?
+  startTime    String?
+  endTime      String?
+  maxCapacity  Int?
+  requiresBoth Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  selections   AddOnSelection[]
+  package      Package          @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@map("addons")
+}
+
+model AddOnSelection {
+  id        String   @id @default(cuid())
+  addOnId   String
+  userId    String
+  bookingId String
+  isSecret  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addOn     AddOn    @relation(fields: [addOnId], references: [id], onDelete: Cascade)
+
+  @@unique([addOnId, userId, bookingId])
+  @@map("addon_selections")
+}
+
+model Booking {
+  id              String           @id @default(cuid())
+  coupleId        String
+  packageId       String
+  status          String           @default("PENDING")
+  basePrice       Int
+  addOnsTotal     Int              @default(0)
+  discountTotal   Int              @default(0)
+  totalPrice      Int
+  travelDate      DateTime?
+  isDiscreet      Boolean          @default(false)
+  discreetEmail   String?
+  storeCredit     Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  addOnSelections AddOnSelection[]
+  package         Package          @relation(fields: [packageId], references: [id])
+  couple          Couple           @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  countdown       Countdown?
+  paymentPlan     PaymentPlan?
+
+  @@map("bookings")
+}
+
+model PaymentPlan {
+  id            String    @id @default(cuid())
+  bookingId     String    @unique
+  totalAmount   Int
+  months        Int
+  monthlyAmount Int
+  startDate     DateTime
+  status        String    @default("ACTIVE")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  payments      Payment[]
+
+  @@map("payment_plans")
+}
+
+model Payment {
+  id            String      @id @default(cuid())
+  paymentPlanId String
+  amount        Int
+  status        String      @default("PENDING")
+  dueDate       DateTime
+  paidAt        DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  paymentPlan   PaymentPlan @relation(fields: [paymentPlanId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Countdown {
+  id         String   @id @default(cuid())
+  coupleId   String
+  bookingId  String   @unique
+  targetDate DateTime
+  message    String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  couple     Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+
+  @@map("countdowns")
+}
