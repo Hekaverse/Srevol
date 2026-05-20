@@ -4,29 +4,33 @@ import { useState, useEffect } from "react";
 
 const letters = [
   { front: "S", back: "L", delay: 0 },
-  { front: "R", back: "O", delay: 0.1 },
-  { front: "E", back: "V", delay: 0.2 },
-  { front: "V", back: "E", delay: 0.3 },
-  { front: "O", back: "R", delay: 0.4 },
-  { front: "L", back: "S", delay: 0.5 },
+  { front: "R", back: "O", delay: 0.08 },
+  { front: "E", back: "V", delay: 0.16 },
+  { front: "V", back: "E", delay: 0.24 },
+  { front: "O", back: "R", delay: 0.32 },
+  { front: "L", back: "S", delay: 0.4 },
 ];
 
 export default function SrevolReveal() {
   const [revealed, setRevealed] = useState(false);
-  const [autoFlip, setAutoFlip] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const timer = setTimeout(() => setAutoFlip(true), 2000);
-    return () => clearTimeout(timer);
+    // Continuously toggle between SREVOL and LOVERS every 3 seconds
+    const interval = setInterval(() => {
+      setRevealed((prev) => !prev);
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
+
+  const isFlipped = revealed;
 
   return (
     <div className="relative">
       {/* Word container */}
       <div
-        className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 cursor-pointer"
+        className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 cursor-pointer select-none"
         onMouseEnter={() => setRevealed(true)}
         onMouseLeave={() => setRevealed(false)}
         onClick={() => setRevealed(!revealed)}
@@ -35,17 +39,13 @@ export default function SrevolReveal() {
           <div
             key={i}
             className="relative"
-            style={{
-              perspective: "600px",
-              animationDelay: `${letter.delay}s`,
-            }}
+            style={{ perspective: "600px" }}
           >
             <div
-              className="relative w-12 h-16 sm:w-16 sm:h-20 md:w-20 md:h-28 transition-transform duration-700"
+              className="relative w-12 h-16 sm:w-16 sm:h-20 md:w-20 md:h-28 transition-transform duration-700 ease-in-out"
               style={{
                 transformStyle: "preserve-3d",
-                transform:
-                  revealed || autoFlip ? "rotateY(180deg)" : "rotateY(0deg)",
+                transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                 transitionDelay: `${letter.delay}s`,
               }}
             >
@@ -76,15 +76,15 @@ export default function SrevolReveal() {
         ))}
       </div>
 
-      {/* Hint text */}
+      {/* Subtle brand tagline — no explanation needed */}
       <div
         className={`text-center mt-6 transition-all duration-1000 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
         style={{ transitionDelay: "1.5s" }}
       >
-        <p className="text-sm sm:text-base text-rose-gold/70 tracking-[0.3em] uppercase">
-          {revealed || autoFlip ? "Lovers. Read it backwards." : "Read it backwards"}
+        <p className="text-sm sm:text-base text-rose-gold/50 tracking-[0.3em] uppercase">
+          For lovers who travel
         </p>
       </div>
     </div>
