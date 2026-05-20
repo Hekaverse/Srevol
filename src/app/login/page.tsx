@@ -55,8 +55,8 @@ export default function LoginPage() {
 
       if (location.includes("/dashboard")) {
         toast.success("Welcome back!");
-        router.push("/dashboard");
-        router.refresh();
+        setLoading(false);
+        window.location.href = "/dashboard";
         return;
       }
 

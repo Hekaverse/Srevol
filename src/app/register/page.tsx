@@ -10,7 +10,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [partnerEmail, setPartnerEmail] = useState("");
-  const [partnerConsent, setPartnerConsent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -27,11 +26,6 @@ export default function RegisterPage() {
       setError("Password must contain uppercase, lowercase, and a number");
       return;
     }
-    if (partnerEmail && !partnerConsent) {
-      setError("Please confirm you have your partner's consent to share their email");
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -72,8 +66,8 @@ export default function RegisterPage() {
         const location = loginRes.headers.get("location") || "";
         if (location.includes("/dashboard")) {
           toast.success("Welcome to SREVOL! Your couple profile is ready.");
-          router.push("/dashboard");
-          router.refresh();
+          setLoading(false);
+          window.location.href = "/dashboard";
           return;
         }
       } catch {
@@ -146,7 +140,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="partner-email" className="block text-sm font-medium text-warm-white/70 mb-2">
-                Partner&apos;s Email
+                Partner&apos;s Email <span className="text-warm-white/30 font-normal">(optional)</span>
               </label>
               <input
                 type="email"
@@ -157,24 +151,9 @@ export default function RegisterPage() {
                 placeholder="partner@example.com"
               />
               <p className="mt-1.5 text-xs text-warm-white/20">
-                We&apos;ll send them an invite to join your couple profile.
+                Optional — invite them later from your dashboard.
               </p>
             </div>
-
-            {partnerEmail && (
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="partner-consent"
-                  checked={partnerConsent}
-                  onChange={(e) => setPartnerConsent(e.target.checked)}
-                  className="mt-1 w-4 h-4 rounded border-plum-600 bg-plum-900/50 text-rose-gold focus:ring-rose-gold/50"
-                />
-                <label htmlFor="partner-consent" className="text-sm text-warm-white/50">
-                  I confirm I have my partner&apos;s consent to share their email address with SREVOL.
-                </label>
-              </div>
-            )}
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-warm-white/70 mb-2">
