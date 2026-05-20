@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  id               String           @id @default(cuid())
-  email            String           @unique
-  name             String?
-  image            String?
-  password         String?
-  role             String           @default("USER")
-  emailVerified    DateTime?
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  addOnSelections  AddOnSelection[]
-  coupleAsPartner2 Couple?          @relation("Partner2")
-  coupleAsPartner1 Couple?          @relation("Partner1")
+  id                String           @id @default(cuid())
+  email             String           @unique
+  name              String?
+  image             String?
+  password          String?
+  role              String           @default("USER")
+  emailVerified     DateTime?
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  addOnSelections   AddOnSelection[]
+  coupleAsPartner2  Couple?          @relation("Partner2")
+  coupleAsPartner1  Couple?          @relation("Partner1")
 
   @@map("users")
 }
