@@ -5,16 +5,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
   try {
-    const text = await request.text();
-    let body;
-    try {
-      body = JSON.parse(text);
-    } catch {
-      return NextResponse.json(
-        { success: false, error: "Invalid JSON", raw: text.slice(0, 200) },
-        { status: 400 }
-      );
-    }
+    const body = await request.json();
     const parsed = registerSchema.safeParse(body);
 
     if (!parsed.success) {
@@ -86,7 +77,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Registration error:", error);
-    const message = error instanceof Error ? error.message : String(error);
+    const message = error instanceof Error ? error.message : "Failed to create account. Please try again.";
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 }

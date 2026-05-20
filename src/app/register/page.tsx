@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
@@ -12,7 +11,7 @@ export default function RegisterPage() {
   const [partnerEmail, setPartnerEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const loginFormRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +25,7 @@ export default function RegisterPage() {
       setError("Password must contain uppercase, lowercase, and a number");
       return;
     }
+
     setLoading(true);
 
     try {
@@ -43,40 +43,20 @@ export default function RegisterPage() {
         return;
       }
 
-      // Auto-login after registration
-      try {
-        const csrfRes = await fetch("/api/auth/csrf", { credentials: "include" });
-        const csrfData = await csrfRes.json();
+      // Auto-login after registration via native form submission
+      const csrfRes = await fetch("/api/auth/csrf", { credentials: "include" });
+      const csrfData = await csrfRes.json();
 
-        const formData = new URLSearchParams();
-        formData.append("email", email);
-        formData.append("password", password);
-        formData.append("csrfToken", csrfData.csrfToken);
-        formData.append("callbackUrl", "/dashboard");
-        formData.append("json", "true");
-
-        const loginRes = await fetch("/api/auth/callback/credentials", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData.toString(),
-          credentials: "include",
-          redirect: "manual",
-        });
-
-        const location = loginRes.headers.get("location") || "";
-        if (location.includes("/dashboard")) {
-          toast.success("Welcome to SREVOL! Your couple profile is ready.");
-          setLoading(false);
-          window.location.href = "/dashboard";
-          return;
-        }
-      } catch {
-        // silent fail — user can log in manually
+      const form = loginFormRef.current;
+      if (form) {
+        (form.elements.namedItem("csrfToken") as HTMLInputElement).value = csrfData.csrfToken;
+        (form.elements.namedItem("email") as HTMLInputElement).value = email;
+        (form.elements.namedItem("password") as HTMLInputElement).value = password;
+        form.submit();
+        // Page will reload to /dashboard on success
       }
-
-      setError("Account created! Please sign in manually.");
-      setLoading(false);
-    } catch {
+    } catch (err) {
+      console.error("Registration error:", err);
       toast.error("Something went wrong. Please try again.");
       setError("Something went wrong. Please try again.");
       setLoading(false);
@@ -180,6 +160,19 @@ export default function RegisterPage() {
             >
               {loading ? "Creating Profile..." : "Create Couple Profile"}
             </button>
+          </form>
+
+          {/* Hidden native form for auto-login after registration */}
+          <form
+            ref={loginFormRef}
+            method="POST"
+            action="/api/auth/callback/credentials"
+            style={{ display: "none" }}
+          >
+            <input type="hidden" name="csrfToken" />
+            <input type="hidden" name="email" />
+            <input type="hidden" name="password" />
+            <input type="hidden" name="callbackUrl" value="/dashboard" />
           </form>
 
           <div className="mt-6 text-center">

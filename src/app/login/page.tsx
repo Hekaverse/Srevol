@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -10,7 +9,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+
   // Show error if redirected back with error param
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -30,59 +30,25 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Get CSRF token first
       const csrfRes = await fetch("/api/auth/csrf", { credentials: "include" });
       const csrfData = await csrfRes.json();
 
-      // Direct fetch to credentials callback
-      const formData = new URLSearchParams();
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("csrfToken", csrfData.csrfToken);
-      formData.append("callbackUrl", "/dashboard");
-      formData.append("json", "true");
+      // Populate the hidden form and submit it natively
+      // The browser handles the POST, 302 redirect, cookie setting, everything
+      const form = formRef.current;
+      if (!form) throw new Error("Form not found");
 
-      const res = await fetch("/api/auth/callback/credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formData.toString(),
-        credentials: "include",
-        redirect: "manual",
-      });
+      (form.elements.namedItem("csrfToken") as HTMLInputElement).value = csrfData.csrfToken;
+      (form.elements.namedItem("email") as HTMLInputElement).value = email;
+      (form.elements.namedItem("password") as HTMLInputElement).value = password;
 
-      // Check if we got redirected to dashboard (success) or login with error
-      const location = res.headers.get("location") || "";
-
-      if (location.includes("/dashboard")) {
-        toast.success("Welcome back!");
-        setLoading(false);
-        window.location.href = "/dashboard";
-        return;
-      }
-
-      if (location.includes("error=")) {
-        setError("Invalid email or password");
-        setLoading(false);
-        return;
-      }
-
-      // Fallback: try checking session
-      const sessionRes = await fetch("/api/auth/session", { credentials: "include" });
-      const session = await sessionRes.json();
-      if (session?.user) {
-        toast.success("Welcome back!");
-        router.push("/dashboard");
-        router.refresh();
-        return;
-      }
-
-      setError("Invalid email or password");
+      form.submit();
+      // Page will reload — either to /dashboard (success) or /login?error=... (failure)
     } catch (err) {
       console.error("Login error:", err);
       setError("Something went wrong. Please try again.");
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -147,6 +113,19 @@ export default function LoginPage() {
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
+          </form>
+
+          {/* Hidden native form that the browser submits for real */}
+          <form
+            ref={formRef}
+            method="POST"
+            action="/api/auth/callback/credentials"
+            style={{ display: "none" }}
+          >
+            <input type="hidden" name="csrfToken" />
+            <input type="hidden" name="email" />
+            <input type="hidden" name="password" />
+            <input type="hidden" name="callbackUrl" value="/dashboard" />
           </form>
 
           <div className="mt-6 text-center space-y-2">
