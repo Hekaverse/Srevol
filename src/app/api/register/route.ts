@@ -5,7 +5,16 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const text = await request.text();
+    let body;
+    try {
+      body = JSON.parse(text);
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Invalid JSON", raw: text.slice(0, 200) },
+        { status: 400 }
+      );
+    }
     const parsed = registerSchema.safeParse(body);
 
     if (!parsed.success) {
