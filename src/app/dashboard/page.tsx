@@ -1,6 +1,7 @@
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
@@ -10,33 +11,98 @@ function formatPrice(cents: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(cents / 100);
 }
 
-export default async function DashboardPage() {
-  const session = await auth();
+interface Bucket {
+  id: string;
+  targetAmount: number;
+  protectedTarget: number;
+  savedAmount: number;
+  monthlyAmount: number;
+  months: number;
+  status: string;
+  inflationBufferApplied: number;
+  repricedAt: string | null;
+  actualBookedPrice: number | null;
+  tier: { name: string; slug: string };
+}
 
-  if (!session?.user) {
-    redirect("/login");
+interface Couple {
+  id: string;
+  name: string | null;
+}
+
+interface DashboardData {
+  user: { id: string; email: string; name: string | null; role: string };
+  couple: Couple | null;
+  buckets: Bucket[];
+}
+
+export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      window.location.href = "/login";
+      return;
+    }
+    if (status !== "authenticated") return;
+
+    fetch("/api/dashboard", { credentials: "include" })
+      .then((res) => res.json().then((result) => ({ result, ok: res.ok, status: res.status })))
+      .then(({ result, status }) => {
+        if (result.error === "Unauthorized" || status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+        if (result.success) {
+          setData(result);
+        } else {
+          setError(result.error || "Failed to load dashboard");
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Dashboard fetch error:", err);
+        setError("Failed to load dashboard");
+        setLoading(false);
+      });
+  }, [status]);
+
+  if (status === "loading" || loading) {
+    return (
+      <div className="min-h-screen bg-plum-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-rose-gold/20 border-t-rose-gold rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-warm-white/40">Loading your journey...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Find the user's couple
-  const couple = await db.couple.findFirst({
-    where: {
-      OR: [{ partner1Id: session.user.id }, { partner2Id: session.user.id }],
-    },
-  });
+  if (error || !data) {
+    return (
+      <div className="min-h-screen bg-plum-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400">{error || "Something went wrong"}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 text-sm text-plum-900 bg-rose-gold rounded-full hover:bg-rose-gold-light transition-all"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const buckets = couple
-    ? await db.budgetBucket.findMany({
-        where: { coupleId: couple.id },
-        include: { tier: true },
-        orderBy: { createdAt: "desc" },
-      })
-    : [];
-
+  const { user, couple, buckets } = data;
   const totalSaved = buckets.reduce((s, b) => s + b.savedAmount, 0);
   const totalTarget = buckets.reduce((s, b) => s + (b.protectedTarget || b.targetAmount), 0);
   const activeBucket = buckets[0];
 
-  const getStatusMessage = (bucket: typeof activeBucket) => {
+  const getStatusMessage = (bucket: Bucket | undefined) => {
     if (!bucket) return { text: "No active plan", color: "text-warm-white/40" };
     const progress = Math.round((bucket.savedAmount / (bucket.protectedTarget || bucket.targetAmount)) * 100);
     if (bucket.status === "SAVING") {
@@ -55,7 +121,7 @@ export default async function DashboardPage() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="mb-10">
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-warm-white">
-              Hello, {session.user.name || session.user.email}
+              Hello, {user.name || user.email}
             </h1>
             <p className="mt-2 text-warm-white/40">
               {activeBucket
@@ -212,7 +278,7 @@ export default async function DashboardPage() {
                 <h3 className="font-bold text-warm-white mb-4">Your Couple</h3>
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
-                    <div className="w-10 h-10 rounded-full bg-plum-600 flex items-center justify-center border-2 border-plum-800"><span className="text-sm font-bold text-warm-white">{session.user.name?.[0] || "Y"}</span></div>
+                    <div className="w-10 h-10 rounded-full bg-plum-600 flex items-center justify-center border-2 border-plum-800"><span className="text-sm font-bold text-warm-white">{user.name?.[0] || "Y"}</span></div>
                     <div className="w-10 h-10 rounded-full bg-blush/30 flex items-center justify-center border-2 border-plum-800"><span className="text-sm font-bold text-warm-white">P</span></div>
                   </div>
                   <div>
@@ -228,7 +294,7 @@ export default async function DashboardPage() {
                   <Link href="/tiers" className="block text-sm text-warm-white/40 hover:text-rose-gold py-2 transition-colors">Explore Tiers</Link>
                   <Link href="/packages" className="block text-sm text-warm-white/40 hover:text-rose-gold py-2 transition-colors">Browse Destinations</Link>
                   <Link href="/demo/addons" className="block text-sm text-warm-white/40 hover:text-rose-gold py-2 transition-colors">Add-On Conflict Engine</Link>
-                  {session.user.role === "ADMIN" && (
+                  {user.role === "ADMIN" && (
                     <Link href="/admin" className="block text-sm text-warm-white/40 hover:text-rose-gold py-2 transition-colors">Command Center</Link>
                   )}
                 </div>
