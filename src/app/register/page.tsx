@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -51,21 +50,38 @@ export default function RegisterPage() {
       }
 
       // Auto-login after registration
-      const loginResult = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      try {
+        const csrfRes = await fetch("/api/auth/csrf", { credentials: "include" });
+        const csrfData = await csrfRes.json();
 
-      if (loginResult?.error) {
-        setError("Account created but login failed. Please sign in manually.");
-        setLoading(false);
-        return;
+        const formData = new URLSearchParams();
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("csrfToken", csrfData.csrfToken);
+        formData.append("callbackUrl", "/dashboard");
+        formData.append("json", "true");
+
+        const loginRes = await fetch("/api/auth/callback/credentials", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString(),
+          credentials: "include",
+          redirect: "manual",
+        });
+
+        const location = loginRes.headers.get("location") || "";
+        if (location.includes("/dashboard")) {
+          toast.success("Welcome to SREVOL! Your couple profile is ready.");
+          router.push("/dashboard");
+          router.refresh();
+          return;
+        }
+      } catch {
+        // silent fail — user can log in manually
       }
 
-      toast.success("Welcome to SREVOL! Your couple profile is ready.");
-      router.push("/dashboard");
-      router.refresh();
+      setError("Account created! Please sign in manually.");
+      setLoading(false);
     } catch {
       toast.error("Something went wrong. Please try again.");
       setError("Something went wrong. Please try again.");

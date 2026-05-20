@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -12,27 +11,78 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  // Show error if redirected back with error param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const errorParam = params.get("error");
+    if (errorParam) {
+      if (errorParam === "CredentialsSignin") {
+        setError("Invalid email or password");
+      } else {
+        setError("Sign in failed. Please try again.");
+      }
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      // Get CSRF token first
+      const csrfRes = await fetch("/api/auth/csrf", { credentials: "include" });
+      const csrfData = await csrfRes.json();
 
-    setLoading(false);
+      // Direct fetch to credentials callback
+      const formData = new URLSearchParams();
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("csrfToken", csrfData.csrfToken);
+      formData.append("callbackUrl", "/dashboard");
+      formData.append("json", "true");
 
-    if (result?.error) {
+      const res = await fetch("/api/auth/callback/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
+        credentials: "include",
+        redirect: "manual",
+      });
+
+      // Check if we got redirected to dashboard (success) or login with error
+      const location = res.headers.get("location") || "";
+
+      if (location.includes("/dashboard")) {
+        toast.success("Welcome back!");
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
+
+      if (location.includes("error=")) {
+        setError("Invalid email or password");
+        setLoading(false);
+        return;
+      }
+
+      // Fallback: try checking session
+      const sessionRes = await fetch("/api/auth/session", { credentials: "include" });
+      const session = await sessionRes.json();
+      if (session?.user) {
+        toast.success("Welcome back!");
+        router.push("/dashboard");
+        router.refresh();
+        return;
+      }
+
       setError("Invalid email or password");
-      return;
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again.");
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    setLoading(false);
   }
 
   return (
