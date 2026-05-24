@@ -11,6 +11,11 @@ import { z } from "zod";
  * - Phase 10: Stripe (payments)
  * - Phase 14: Sentry (monitoring)
  */
+// Trim all string env vars to handle newline artifacts from CI/pipe input
+const trimmedEnv = Object.fromEntries(
+  Object.entries(process.env).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])
+);
+
 export const env = z
   .object({
     // ============================================
@@ -62,4 +67,4 @@ export const env = z
     // ============================================
     SENTRY_DSN: z.string().url().optional(),
   })
-  .parse(process.env);
+  .parse(trimmedEnv);
