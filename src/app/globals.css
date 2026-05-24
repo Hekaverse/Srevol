@@ -8,9 +8,7 @@
 
   /* ============================================
      SREVOL — Volcanic & Ember Palette
-     Deep charcoal, burnt sienna, warm amber
      ============================================ */
-
   --color-obsidian: #0C0C0C;
   --color-obsidian-light: #151515;
   --color-obsidian-muted: #252525;
@@ -32,6 +30,13 @@
 :root {
   --background: #0C0C0C;
   --foreground: #FAF7F2;
+  cursor: none;
+}
+
+@media (pointer: coarse) {
+  :root {
+    cursor: auto;
+  }
 }
 
 html {
@@ -44,21 +49,21 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Elegant scrollbar */
+/* Minimal scrollbar — no rounded corners */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #252525;
-  border-radius: 3px;
+  background: #333;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A3A3A;
+  background: #444;
 }
 
 ::selection {
@@ -67,56 +72,127 @@ body {
 }
 
 /* ============================================
-   CORE ANIMATIONS (kept, refined)
+   BESPOKE ANIMATIONS
    ============================================ */
 
-@keyframes breathe {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.05); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
 @keyframes reveal-up {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(40px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-breathe {
-  animation: breathe 4s ease-in-out infinite;
+@keyframes reveal-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-.animate-shimmer {
-  background-size: 200% auto;
-  animation: shimmer 3s linear infinite;
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
 }
 
 .animate-reveal-up {
-  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Stagger children */
-.stagger-children > * {
+.animate-reveal-left {
+  animation: reveal-left 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-line-grow {
+  animation: line-grow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: left;
+}
+
+.animate-fade-in {
+  animation: fade-in 1.5s ease forwards;
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 20s ease forwards;
+}
+
+/* ============================================
+   BESPOKE UTILITIES
+   ============================================ */
+
+.ease-expo {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tracking-luxury {
+  letter-spacing: 0.02em;
+}
+
+.tracking-wide-luxury {
+  letter-spacing: 0.15em;
+}
+
+/* Hairline rule */
+.hairline {
+  height: 1px;
+  background: rgba(250, 247, 242, 0.08);
+}
+
+.hairline-ember {
+  height: 1px;
+  background: rgba(199, 107, 74, 0.2);
+}
+
+/* Vertical hairline */
+.hairline-v {
+  width: 1px;
+  background: rgba(250, 247, 242, 0.08);
+}
+
+/* Editorial link — no underline animation, just color */
+.link-editorial {
+  transition: color 0.4s ease;
+}
+.link-editorial:hover {
+  color: #C76B4A;
+}
+
+/* Image hover — slow, cinematic */
+.img-cinematic {
+  transition: transform 8s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease;
+}
+.group:hover .img-cinematic {
+  transform: scale(1.05);
+}
+
+/* Row hover reveal */
+.row-reveal {
+  position: relative;
+  overflow: hidden;
+}
+.row-reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
   opacity: 0;
-  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 1s ease;
+  z-index: 0;
 }
-.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+.row-reveal:hover::before {
+  opacity: 0.15;
+}
 
-/* Horizontal scroll snap */
-.scroll-snap-x {
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-.scroll-snap-x > * {
-  scroll-snap-align: start;
+/* Focus ring — sharp, no radius */
+.focus-luxury:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(199, 107, 74, 0.5);
 }
 
 /* Hide scrollbar but keep functionality */
@@ -126,94 +202,6 @@ body {
 }
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-/* Text gradient — Ember to Amber */
-.text-gradient-ember {
-  background: linear-gradient(135deg, #C76B4A 0%, #D4A056 50%, #E08A6A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass morphism — updated for obsidian */
-.glass {
-  background: rgba(12, 12, 12, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Premium easing */
-.ease-expo {
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Letter spacing for luxury feel */
-.tracking-luxury {
-  letter-spacing: 0.02em;
-}
-.tracking-wide-luxury {
-  letter-spacing: 0.15em;
-}
-
-/* Premium underline animation */
-.link-underline {
-  position: relative;
-}
-.link-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.link-underline:hover::after {
-  width: 100%;
-}
-
-/* Glow effects — ember */
-.glow-ember {
-  box-shadow: 0 0 40px rgba(199, 107, 74, 0.15), 0 0 80px rgba(199, 107, 74, 0.05);
-}
-
-.glow-subtle {
-  box-shadow: 0 0 60px rgba(199, 107, 74, 0.08);
-}
-
-/* Premium border treatment */
-.border-luxury {
-  border: 1px solid rgba(199, 107, 74, 0.12);
-}
-
-/* Scale on hover with spring */
-.hover-lift {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Image zoom on hover */
-.img-zoom {
-  overflow: hidden;
-}
-.img-zoom img,
-.img-zoom > div {
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.img-zoom:hover img,
-.img-zoom:hover > div {
-  transform: scale(1.05);
-}
-
-/* Premium divider */
-.divider-luxury {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(199, 107, 74, 0.3), transparent);
 }
 
 /* Skeleton shimmer — for obsidian backgrounds */
@@ -226,22 +214,6 @@ body {
   background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
-}
-
-/* Focus ring */
-.focus-luxury:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(199, 107, 74, 0.5), 0 0 0 4px #0C0C0C;
-}
-
-/* Loading spinner */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
 }
 
 /* Departure board ticker */

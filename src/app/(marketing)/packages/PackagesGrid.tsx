@@ -1,10 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
-import TiltCard from "@/components/TiltCard";
-import ScrollReveal from "@/components/ScrollReveal";
 
 interface PackageTemplate {
   id: string;
@@ -29,148 +26,142 @@ function formatPrice(price: number) {
   }).format(price / 100);
 }
 
-function PackageSkeleton() {
-  return (
-    <div className="relative h-96 rounded-3xl overflow-hidden skeleton-shimmer">
-      <div className="absolute bottom-0 left-0 right-0 p-6 space-y-3">
-        <div className="h-6 w-32 skeleton-shimmer rounded" />
-        <div className="h-4 w-48 skeleton-shimmer rounded" />
-      </div>
-    </div>
-  );
-}
-
 export default function PackagesGrid({
   templates,
 }: {
   templates: PackageTemplate[];
 }) {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   const filtered =
     activeFilter === "All"
       ? templates
       : templates.filter((p) => p.category === activeFilter.toUpperCase());
 
-  const filters = ["All", "Milestone", "Celebration", "Short Haul", "Adventure"];
+  const filters = ["All", "Honeymoon", "Adventure", "Milestone", "Celebration"];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
       {/* Header */}
-      <ScrollReveal animation="fade-up" className="text-center mb-20">
-        <span className="text-xs font-medium text-ember tracking-wide-luxury uppercase">
-          The SREVOL Network
+      <div className="pt-20 pb-16">
+        <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/30">
+          The Network
         </span>
-        <h1 className="mt-5 font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-warm-white tracking-tight">
-          Curated Routes
+        <h1
+          className="mt-4 font-serif text-4xl sm:text-5xl lg:text-7xl font-light text-warm-white tracking-tight"
+          style={{ lineHeight: 0.95 }}
+        >
+          Curated
+          <br />
+          <span className="text-ember">Routes</span>
         </h1>
-        <p className="mt-6 text-lg text-warm-white/30 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-sm text-warm-white/25 max-w-md leading-relaxed">
           Every route is chosen for two. Browse, dream, and secure your departure.
         </p>
-      </ScrollReveal>
+      </div>
 
       {/* Filters */}
-      <ScrollReveal
-        animation="fade-up"
-        delay={0.2}
-        className="flex flex-wrap items-center justify-center gap-3 mb-16"
-      >
+      <div className="flex flex-wrap items-center gap-1 mb-12">
         {filters.map((filter) => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-500 ease-expo ${
+            className={`px-4 py-2 text-[11px] tracking-[0.1em] uppercase transition-all duration-500 ease-expo ${
               activeFilter === filter
-                ? "bg-ember text-warm-white shadow-lg shadow-ember/10"
-                : "border border-warm-white/10 text-warm-white/40 hover:border-warm-white/25 hover:text-warm-white/70"
+                ? "text-ember"
+                : "text-warm-white/25 hover:text-warm-white/50"
             }`}
           >
             {filter}
           </button>
         ))}
-      </ScrollReveal>
+      </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Hairline */}
+      <div className="hairline mb-0" />
+
+      {/* Route list */}
+      <div className="relative">
         {filtered.map((pkg, index) => (
-          <ScrollReveal
+          <Link
             key={pkg.id}
-            animation="fade-up"
-            delay={index * 0.08}
+            href={`/packages/${pkg.slug}`}
+            className="group block"
+            onMouseEnter={() => setHoveredSlug(pkg.slug)}
+            onMouseLeave={() => setHoveredSlug(null)}
           >
-            <Link href={`/packages/${pkg.slug}`} className="group block">
-              <TiltCard
-                className="relative h-96 rounded-3xl overflow-hidden"
-                maxTilt={5}
-                glareOpacity={0.05}
-              >
-                <Image
-                  src={
-                    pkg.image ||
-                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
-                  }
-                  alt={pkg.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-[1.5s] ease-expo group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-transparent" />
-                {pkg.isPremium && (
-                  <div className="absolute top-5 left-5">
-                    <span className="px-3 py-1.5 text-[10px] font-medium tracking-[0.2em] uppercase text-warm-white bg-ember rounded-full">
-                      Premium
+            <div
+              className={`border-t border-warm-white/5 py-6 lg:py-8 transition-all duration-500 ease-expo ${
+                hoveredSlug === pkg.slug ? "bg-warm-white/[0.02]" : ""
+              }`}
+            >
+              <div className="flex items-center justify-between gap-4">
+                {/* Left — index + tier */}
+                <div className="hidden lg:flex items-center gap-6 w-40 flex-shrink-0">
+                  <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/20 font-mono">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  {pkg.tier && (
+                    <span className="text-[9px] tracking-[0.2em] uppercase text-warm-white/15">
+                      {pkg.tier.name}
                     </span>
+                  )}
+                </div>
+
+                {/* Center — destination */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl text-warm-white/80 group-hover:text-warm-white transition-colors duration-500 truncate">
+                      {pkg.title}
+                    </h3>
+                    {pkg.isPremium && (
+                      <span className="hidden sm:inline text-[9px] tracking-[0.2em] uppercase text-ember/60">
+                        Premium
+                      </span>
+                    )}
                   </div>
-                )}
-                {pkg.recentBookings > 0 && (
-                  <div className="absolute top-5 right-5">
-                    <span className="px-3 py-1.5 text-[10px] font-medium tracking-[0.2em] uppercase text-warm-white/80 bg-obsidian/60 backdrop-blur-sm rounded-full border border-warm-white/10">
-                      {pkg.recentBookings} booked this month
-                    </span>
+                  <p className="mt-1 text-xs text-warm-white/20 group-hover:text-warm-white/30 transition-colors duration-500">
+                    {pkg.subtitle}
+                  </p>
+                </div>
+
+                {/* Right — price + duration + arrow */}
+                <div className="flex items-center gap-6 lg:gap-10 flex-shrink-0">
+                  <div className="hidden sm:block text-right">
+                    <p className="text-sm text-warm-white/60 font-serif">
+                      {formatPrice(pkg.basePrice)}
+                    </p>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-warm-white/15">
+                      Cabin for 2
+                    </p>
                   </div>
-                )}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="flex items-end justify-between gap-4">
-                    <div>
-                      <h3 className="font-serif text-2xl font-bold text-warm-white group-hover:text-ember transition-colors duration-500">
-                        {pkg.title}
-                      </h3>
-                      <p className="mt-1.5 text-sm text-warm-white/40">
-                        {pkg.subtitle}
-                      </p>
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-xl font-bold text-warm-white font-serif">
-                        {formatPrice(pkg.basePrice)}
-                      </p>
-                      <p className="text-[10px] text-warm-white/25 tracking-wide-luxury uppercase">
-                        cabin for 2
-                      </p>
-                    </div>
+                  <div className="text-right">
+                    <p className="text-sm text-warm-white/40">
+                      {pkg.duration}d
+                    </p>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-warm-white/8 flex items-center justify-between">
-                    <span className="text-[11px] text-warm-white/25 tracking-wide-luxury uppercase">
-                      {pkg.destination} &middot; {pkg.duration} days
-                    </span>
-                    <span className="text-[11px] text-ember/70 font-medium group-hover:translate-x-1 transition-transform duration-300">
-                      View Route &rarr;
-                    </span>
+                  <div className="hidden lg:flex items-center">
+                    <span className="w-6 h-px bg-warm-white/20 group-hover:w-10 group-hover:bg-ember transition-all duration-500 ease-expo" />
                   </div>
                 </div>
-              </TiltCard>
-            </Link>
-          </ScrollReveal>
+              </div>
+            </div>
+          </Link>
         ))}
+
+        {/* Bottom border */}
+        <div className="border-t border-warm-white/5" />
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-warm-white/30 text-lg">
+        <div className="py-20 text-center">
+          <p className="text-warm-white/30 text-sm tracking-luxury">
             No routes match this filter.
           </p>
           <button
             onClick={() => setActiveFilter("All")}
-            className="mt-4 text-ember/70 hover:text-ember transition-colors"
+            className="mt-4 text-[11px] tracking-[0.15em] uppercase text-ember/50 hover:text-ember transition-colors duration-500"
           >
             Show all routes
           </button>

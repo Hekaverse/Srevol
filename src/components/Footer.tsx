@@ -1,123 +1,68 @@
 "use client";
 
 import Link from "next/link";
-import SrevolReveal from "./SrevolReveal";
 
 export default function Footer() {
   return (
-    <footer className="bg-obsidian border-t border-ember/5 relative">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-          {/* Brand */}
-          <div className="md:col-span-4">
-            <Link href="/" className="inline-block group">
-              <span className="font-serif text-3xl font-bold text-warm-white group-hover:text-ember transition-colors duration-500">
-                SREVOL
-              </span>
+    <footer className="bg-obsidian">
+      {/* Single hairline */}
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+        <div className="hairline" />
+      </div>
+
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-16 lg:py-20">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
+          {/* Left — wordmark + tagline */}
+          <div>
+            <Link
+              href="/"
+              className="font-serif text-2xl tracking-[0.15em] uppercase text-warm-white hover:text-ember transition-colors duration-500"
+            >
+              Srevol
             </Link>
-            <p className="mt-5 text-sm text-warm-white/25 leading-relaxed max-w-xs">
-              The private carrier for two. Reserve together. Depart together.
+            <p className="mt-3 text-xs text-warm-white/20 tracking-luxury">
+              The Private Carrier for Two
             </p>
-            <div className="mt-8 flex items-center gap-6">
-              {[
-                { label: "Instagram", href: "https://instagram.com/srevol" },
-                { label: "TikTok", href: "https://tiktok.com/@srevol" },
-                { label: "Pinterest", href: "https://pinterest.com/srevol" },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Follow us on ${social.label}`}
-                  className="text-[11px] text-warm-white/20 hover:text-ember transition-colors duration-500 tracking-wide-luxury uppercase link-underline"
-                >
-                  {social.label}
-                </a>
-              ))}
-            </div>
           </div>
 
-          {/* Routes */}
-          <div className="md:col-span-2 md:col-start-5">
-            <h3 className="text-[10px] font-semibold text-warm-white/30 uppercase tracking-[0.3em] mb-6">
-              Routes
-            </h3>
-            <ul className="space-y-3">
-              {["Santorini", "Maldives", "Bora Bora", "Amalfi Coast", "Kyoto"].map((dest) => (
-                <li key={dest}>
-                  <Link href={`/packages?destination=${dest.toLowerCase()}`} className="text-sm text-warm-white/25 hover:text-ember transition-colors duration-500 link-underline">
-                    {dest}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div className="md:col-span-2">
-            <h3 className="text-[10px] font-semibold text-warm-white/30 uppercase tracking-[0.3em] mb-6">
-              Company
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { label: "The Experience", href: "/how-it-works" },
-                { label: "FAQ", href: "/faq" },
-                { label: "Contact", href: "/contact" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link href={item.href} className="text-sm text-warm-white/25 hover:text-ember transition-colors duration-500 link-underline">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div className="md:col-span-2">
-            <h3 className="text-[10px] font-semibold text-warm-white/30 uppercase tracking-[0.3em] mb-6">
-              Support
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { label: "FAQ", href: "/faq" },
-                { label: "Contact", href: "/contact" },
-                { label: "Rebooking Policy", href: "/terms" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link href={item.href} className="text-sm text-warm-white/25 hover:text-ember transition-colors duration-500 link-underline">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link href="/privacy" className="text-sm text-warm-white/25 hover:text-ember transition-colors duration-500 link-underline">
-                  Privacy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-sm text-warm-white/25 hover:text-ember transition-colors duration-500 link-underline">
-                  Terms
-                </Link>
-              </li>
-            </ul>
+          {/* Right — minimal links */}
+          <div className="flex flex-wrap items-center gap-6 lg:gap-10">
+            {[
+              { label: "Routes", href: "/packages" },
+              { label: "Experience", href: "/how-it-works" },
+              { label: "Contact", href: "/contact" },
+              { label: "Privacy", href: "/privacy" },
+              { label: "Terms", href: "/terms" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-[11px] tracking-[0.15em] uppercase text-warm-white/20 hover:text-warm-white/60 transition-colors duration-500"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
 
-        <div className="mt-24 pt-8 border-t border-warm-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-warm-white/15 tracking-luxury">
-            &copy; {new Date().getFullYear()} SREVOL. The Private Carrier for Two.
+        {/* Bottom line */}
+        <div className="mt-16 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <p className="text-[10px] text-warm-white/10 tracking-luxury">
+            &copy; {new Date().getFullYear()} SREVOL. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-warm-white/10 hover:text-warm-white/30 transition-colors duration-500">Privacy</Link>
-            <Link href="/terms" className="text-xs text-warm-white/10 hover:text-warm-white/30 transition-colors duration-500">Terms</Link>
+          <div className="flex items-center gap-8">
+            {["Instagram", "TikTok"].map((social) => (
+              <a
+                key={social}
+                href={`https://${social.toLowerCase()}.com/srevol`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] tracking-[0.15em] uppercase text-warm-white/10 hover:text-warm-white/40 transition-colors duration-500"
+              >
+                {social}
+              </a>
+            ))}
           </div>
-        </div>
-
-        {/* Easter Egg: SrevolReveal */}
-        <div className="mt-6 flex justify-center">
-          <SrevolReveal compact />
         </div>
       </div>
     </footer>

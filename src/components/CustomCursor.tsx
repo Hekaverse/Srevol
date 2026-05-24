@@ -1,109 +1,82 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const [isTouch, setIsTouch] = useState(false);
-
-  const pos = useRef({ x: -100, y: -100 });
-  const target = useRef({ x: -100, y: -100 });
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Disable on touch devices
-    if ("ontouchstart" in window || navigator.maxTouchPoints > 0) {
-      setIsTouch(true);
-      return;
-    }
+    // Don't show custom cursor on touch devices
+    if (typeof window !== "undefined" && "ontouchstart" in window) return;
 
-    const onMove = (e: MouseEvent) => {
-      target.current = { x: e.clientX, y: e.clientY };
+    const onMouseMove = (e: MouseEvent) => {
+      setPosition({ x: e.clientX, y: e.clientY });
+      if (!isVisible) setIsVisible(true);
     };
 
-    const onOver = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
-      if (
-        el.tagName === "A" ||
-        el.tagName === "BUTTON" ||
-        el.closest("a") ||
-        el.closest("button") ||
-        el.dataset.cursor === "pointer"
-      ) {
-        setIsHovering(true);
-      }
+    const onMouseEnter = () => setIsVisible(true);
+    const onMouseLeave = () => setIsVisible(false);
+
+    const onElementHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isInteractive = Boolean(
+        target.tagName === "A" ||
+        target.tagName === "BUTTON" ||
+        target.closest("a") ||
+        target.closest("button") ||
+        target.classList.contains("cursor-pointer")
+      );
+      setIsHovering(isInteractive);
     };
 
-    const onOut = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
-      if (
-        el.tagName === "A" ||
-        el.tagName === "BUTTON" ||
-        el.closest("a") ||
-        el.closest("button") ||
-        el.dataset.cursor === "pointer"
-      ) {
-        setIsHovering(false);
-      }
-    };
-
-    let raf: number;
-    const animate = () => {
-      pos.current.x += (target.current.x - pos.current.x) * 0.15;
-      pos.current.y += (target.current.y - pos.current.y) * 0.15;
-
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px) translate(-50%, -50%)`;
-      }
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${target.current.x}px, ${target.current.y}px) translate(-50%, -50%)`;
-      }
-
-      raf = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseover", onOver);
-    document.addEventListener("mouseout", onOut);
-    raf = requestAnimationFrame(animate);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseover", onElementHover);
+    document.body.addEventListener("mouseenter", onMouseEnter);
+    document.body.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
-      window.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseover", onOver);
-      document.removeEventListener("mouseout", onOut);
-      cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onElementHover);
+      document.body.removeEventListener("mouseenter", onMouseEnter);
+      document.body.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, []);
+  }, [isVisible]);
 
-  if (isTouch) return null;
+  if (typeof window !== "undefined" && "ontouchstart" in window) return null;
 
   return (
     <>
-      {/* Outer ring */}
+      {/* Small dot — follows immediately */}
       <div
-        ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference transition-[width,height,margin] duration-300 ease-out hidden lg:block ${
-          isHovering ? "w-16 h-16 -m-8" : "w-10 h-10 -m-5"
-        }`}
+        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+        style={{
+          transform: `translate(${position.x - 2}px, ${position.y - 2}px)`,
+          opacity: isVisible ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
       >
-        <div
-          className={`w-full h-full rounded-full border transition-all duration-300 ${
-            isHovering
-              ? "border-ember/60 bg-ember/5"
-              : "border-warm-white/40"
-          }`}
-        />
+        <div className="w-1 h-1 bg-warm-white" />
       </div>
-      {/* Center dot */}
+
+      {/* Outer ring — follows with delay, expands on hover */}
       <div
-        ref={dotRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9999] hidden lg:block"
+        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          opacity: isVisible ? (isHovering ? 0.6 : 0.3) : 0,
+          transition: "transform 0.15s ease-out, opacity 0.3s ease, width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
       >
         <div
-          className={`rounded-full bg-ember transition-[width,height,margin] duration-200 ${
-            isHovering ? "w-1.5 h-1.5 -m-[3px] opacity-0" : "w-1 h-1 -m-[2px] opacity-100"
-          }`}
+          className="border border-warm-white/40"
+          style={{
+            width: isHovering ? 48 : 24,
+            height: isHovering ? 48 : 24,
+            marginLeft: isHovering ? -24 : -12,
+            marginTop: isHovering ? -24 : -12,
+          }}
         />
       </div>
     </>

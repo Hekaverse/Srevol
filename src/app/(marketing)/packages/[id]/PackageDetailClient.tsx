@@ -7,7 +7,6 @@ import HotelDetailCard from "@/components/HotelDetailCard";
 import ItineraryTimeline from "@/components/ItineraryTimeline";
 import PriceBreakdown from "@/components/PriceBreakdown";
 import ExperienceMarketplace from "@/components/ExperienceMarketplace";
-import ScrollReveal from "@/components/ScrollReveal";
 
 interface PackageTemplate {
   id: string;
@@ -109,9 +108,9 @@ export default function PackageDetailClient({
 
   return (
     <div className="min-h-screen bg-obsidian">
-      <main className="pt-16 pb-24">
-        {/* Hero */}
-        <div className="relative h-[55vh] min-h-[450px]">
+      <main className="pt-0 pb-24">
+        {/* Hero — full-bleed cinematic */}
+        <div className="relative h-[70vh] min-h-[500px]">
           <Image
             src={template.image}
             alt={template.title}
@@ -120,35 +119,42 @@ export default function PackageDetailClient({
             className="object-cover"
             priority={true}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-3 py-1.5 bg-ember text-obsidian text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
-                  Route
-                </span>
-                {data?.template.tier && (
-                  <span className="px-3 py-1.5 border border-amber/20 text-amber text-[10px] font-medium tracking-[0.2em] uppercase rounded-full">
-                    {data.template.tier.name} Class
-                  </span>
-                )}
-              </div>
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-warm-white">
+          <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/50 to-transparent" />
+
+          {/* Top badges */}
+          <div className="absolute top-24 left-8 lg:left-12 z-10 flex items-center gap-3">
+            <span className="px-3 py-1.5 bg-ember text-obsidian text-[10px] font-medium tracking-[0.2em] uppercase">
+              Route
+            </span>
+            {data?.template.tier && (
+              <span className="px-3 py-1.5 border border-amber/20 text-amber text-[10px] font-medium tracking-[0.2em] uppercase">
+                {data.template.tier.name} Class
+              </span>
+            )}
+          </div>
+
+          {/* Bottom content */}
+          <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
+            <div className="max-w-[1400px] mx-auto">
+              <h1
+                className="font-serif text-4xl sm:text-5xl lg:text-7xl font-light text-warm-white tracking-tight"
+                style={{ lineHeight: 0.95 }}
+              >
                 {template.title}
               </h1>
-              <p className="mt-2 text-lg text-warm-white/60">
+              <p className="mt-3 text-lg text-warm-white/50">
                 {template.subtitle}
               </p>
               <div className="flex items-center gap-4 mt-4">
-                <span className="text-sm text-warm-white/40">
+                <span className="text-sm text-warm-white/30">
                   {template.destination}
                 </span>
-                <span className="w-1 h-1 rounded-full bg-warm-white/20" />
-                <span className="text-sm text-warm-white/40">
+                <span className="w-px h-3 bg-warm-white/10" />
+                <span className="text-sm text-warm-white/30">
                   {template.duration} days
                 </span>
-                <span className="w-1 h-1 rounded-full bg-warm-white/20" />
-                <span className="text-sm text-warm-white/40">
+                <span className="w-px h-3 bg-warm-white/10" />
+                <span className="text-sm text-warm-white/30">
                   For 2 travelers
                 </span>
               </div>
@@ -156,30 +162,32 @@ export default function PackageDetailClient({
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Content */}
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-10">
+            <div className="lg:col-span-8 space-y-16">
               {/* Description */}
-              <ScrollReveal animation="fade-up">
-                <div>
-                  <h2 className="font-serif text-2xl font-bold text-warm-white mb-4">
-                    About This Route
-                  </h2>
-                  <p className="text-warm-white/50 leading-relaxed">
-                    {template.description}
-                  </p>
-                </div>
-              </ScrollReveal>
+              <div>
+                <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                  About This Route
+                </span>
+                <p className="mt-4 text-warm-white/40 leading-relaxed text-lg">
+                  {template.description}
+                </p>
+              </div>
 
-              {/* Gallery */}
+              {/* Gallery — no rounded corners */}
               {template.gallery.length > 0 && (
-                <ScrollReveal animation="fade-up" delay={0.1}>
-                  <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                    Gallery
+                  </span>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
                     {template.gallery.map((img, i) => (
                       <div
                         key={i}
-                        className={`relative rounded-2xl overflow-hidden ${
+                        className={`relative overflow-hidden ${
                           i === 0 ? "col-span-2 aspect-[2/1]" : "aspect-square"
                         }`}
                       >
@@ -193,68 +201,68 @@ export default function PackageDetailClient({
                       </div>
                     ))}
                   </div>
-                </ScrollReveal>
+                </div>
               )}
 
               {/* Hotel */}
               {!loading && data?.hotel && (
-                <ScrollReveal animation="fade-up" delay={0.15}>
-                  <HotelDetailCard
-                    hotel={data.hotel}
-                    duration={template.duration}
-                  />
-                </ScrollReveal>
+                <HotelDetailCard
+                  hotel={data.hotel}
+                  duration={template.duration}
+                />
               )}
 
               {/* Itinerary */}
               {!loading && data?.itinerary && data.itinerary.length > 0 && (
-                <ScrollReveal animation="fade-up" delay={0.2}>
-                  <ItineraryTimeline
-                    days={data.itinerary}
-                    totalDays={template.duration}
-                  />
-                </ScrollReveal>
+                <ItineraryTimeline
+                  days={data.itinerary}
+                  totalDays={template.duration}
+                />
               )}
 
               {/* Experience Marketplace */}
               {!loading && data?.experiences && data.experiences.length > 0 && (
-                <ScrollReveal animation="fade-up" delay={0.25}>
-                  <ExperienceMarketplace
-                    experiences={data.experiences}
-                    duration={template.duration}
-                  />
-                </ScrollReveal>
+                <ExperienceMarketplace
+                  experiences={data.experiences}
+                  duration={template.duration}
+                />
               )}
 
               {/* Price Breakdown */}
               {!loading && data?.priceBreakdown && (
-                <ScrollReveal animation="fade-up" delay={0.3}>
-                  <PriceBreakdown {...data.priceBreakdown} />
-                </ScrollReveal>
+                <PriceBreakdown {...data.priceBreakdown} />
               )}
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              <div className="bg-obsidian-light/50 rounded-2xl border border-obsidian-muted/30 p-6 sticky top-24">
-                <div className="text-center mb-6">
-                  <p className="text-sm text-warm-white/30">Fare from</p>
-                  <p className="font-serif text-3xl font-bold text-warm-white">
+            {/* Sidebar — editorial, not card */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-24 space-y-8">
+                <div className="border border-warm-white/5 p-8">
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                    Fare from
+                  </p>
+                  <p className="mt-2 font-serif text-4xl font-light text-warm-white">
                     {formatPrice(data?.priceBreakdown?.total || template.basePrice)}
                   </p>
-                  <p className="text-sm text-warm-white/30">
+                  <p className="mt-1 text-xs text-warm-white/20 tracking-luxury">
                     cabin for 2 · {template.duration} days
                   </p>
+
+                  <div className="mt-8">
+                    <PaymentPlanCalculator
+                      packageTemplateId={template.id}
+                      totalPrice={
+                        (data?.priceBreakdown?.total || template.basePrice) / 100
+                      }
+                    />
+                  </div>
                 </div>
-                <PaymentPlanCalculator
-                  packageTemplateId={template.id}
-                  totalPrice={
-                    (data?.priceBreakdown?.total || template.basePrice) / 100
-                  }
-                />
-                <div className="mt-6 pt-6 border-t border-obsidian-muted/30">
-                  <p className="text-xs text-warm-white/20 text-center">
+
+                <div className="border border-warm-white/5 p-6">
+                  <p className="text-xs text-warm-white/15 leading-relaxed">
                     Fares are live estimates. Final fare confirmed at booking.
+                    All reservations include flexible rebooking and secure fund
+                    protection.
                   </p>
                 </div>
               </div>

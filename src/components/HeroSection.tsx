@@ -1,105 +1,135 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import AtmosphericBackground from "./AtmosphericBackground";
-import TextReveal from "./TextReveal";
+import Link from "next/link";
+
+const heroImages = [
+  "https://images.unsplash.com/photo-1518259102261-b40117eabbc9?w=1920&h=1080&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=1920&h=1080&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&h=1080&fit=crop&q=80",
+];
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 100);
-    return () => clearTimeout(timer);
+    setMounted(true);
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+    }, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center bg-obsidian overflow-hidden">
-      <AtmosphericBackground />
+    <section className="relative h-screen w-full overflow-hidden bg-obsidian">
+      {/* Cinematic background crossfade */}
+      {heroImages.map((src, index) => (
+        <div
+          key={src}
+          className="absolute inset-0 transition-opacity duration-[2000ms] ease-expo"
+          style={{
+            opacity: currentImage === index ? 0.35 : 0,
+            zIndex: 1,
+          }}
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center animate-slow-zoom"
+            style={{ backgroundImage: `url(${src})` }}
+          />
+        </div>
+      ))}
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* The Brand Wordmark */}
+      {/* Vignette overlay */}
+      <div
+        className="absolute inset-0 z-[2]"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 30%, rgba(12,12,12,0.8) 100%)",
+        }}
+      />
+
+      {/* Bottom gradient for readability */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-1/2 z-[2]"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(12,12,12,0.9) 0%, transparent 100%)",
+        }}
+      />
+
+      {/* Content — anchored bottom-left, editorial */}
+      <div className="relative z-10 h-full flex flex-col justify-end max-w-[1400px] mx-auto px-8 lg:px-12 pb-20 lg:pb-28">
+        {/* Route indicator */}
         <div
           className={`transition-all duration-1000 ease-expo ${
-            mounted ? "opacity-100 scale-100" : "opacity-0 scale-95"
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
+          style={{ transitionDelay: "0.2s" }}
         >
-          <span className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-warm-white">
-            SREVOL
+          <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/30">
+            Est. 2026 — Private Carrier
           </span>
         </div>
 
-        {/* Tagline with character reveal */}
+        {/* Massive wordmark */}
+        <h1
+          className={`mt-6 font-serif font-light text-warm-white leading-[0.85] tracking-tight transition-all duration-1000 ease-expo ${
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+          style={{
+            transitionDelay: "0.5s",
+            fontSize: "clamp(4rem, 15vw, 14rem)",
+          }}
+        >
+          SREVOL
+        </h1>
+
+        {/* Hairline */}
         <div
-          className={`mt-10 transition-all duration-1000 delay-500 ease-expo ${
+          className={`mt-8 hairline-ember max-w-[200px] transition-all duration-1000 ease-expo ${
+            mounted ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+          }`}
+          style={{
+            transitionDelay: "0.8s",
+            transformOrigin: "left",
+          }}
+        />
+
+        {/* Tagline row */}
+        <div
+          className={`mt-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 transition-all duration-1000 ease-expo ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
+          style={{ transitionDelay: "1s" }}
         >
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-warm-white/90 leading-tight tracking-tight">
-            <TextReveal text="Every Great Departure" delay={0.8} stagger={0.025} />
+          <p className="text-lg lg:text-xl text-warm-white/40 max-w-md leading-relaxed font-light">
+            The private carrier for two.
             <br />
-            <span className="text-ember">
-              <TextReveal text="Begins Before Boarding" delay={1.4} stagger={0.03} />
-            </span>
-          </h1>
-          <p
-            className={`mt-6 text-lg sm:text-xl text-warm-white/35 max-w-2xl mx-auto leading-relaxed italic font-light transition-all duration-1000 delay-[1.8s] ease-expo ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            The private carrier for two. Reserve your route, lock your fare, and let the anticipation carry you there.
+            Reserve your route. Lock your fare.
           </p>
-        </div>
 
-        {/* CTA */}
-        <div
-          className={`mt-14 transition-all duration-1000 delay-[2.2s] ease-expo ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
           <Link
-            href="/tiers"
-            className="group inline-flex items-center gap-3 px-8 py-4 text-sm font-medium text-warm-white bg-ember rounded-full transition-all duration-500 ease-expo hover:shadow-xl hover:shadow-ember/20 hover:glow-ember"
+            href="/packages"
+            className="group inline-flex items-center gap-4 text-[11px] tracking-[0.2em] uppercase text-warm-white/50 hover:text-ember transition-colors duration-500"
           >
-            <span>Secure Your Departure</span>
-            <svg
-              className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+            <span>Explore Routes</span>
+            <span className="w-8 h-px bg-current group-hover:w-12 transition-all duration-500 ease-expo" />
           </Link>
-          <p className="mt-5 text-xs text-warm-white/20 tracking-wide-luxury uppercase">
-            No commitment. Preview cabins. Reserve together.
-          </p>
-        </div>
-
-        {/* Two-ticket badge */}
-        <div
-          className={`mt-16 transition-all duration-1000 delay-[2.6s] ease-expo ${
-            mounted ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-warm-white/10 bg-warm-white/[0.03] backdrop-blur-sm">
-            <svg className="w-3.5 h-3.5 text-ember/60" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-            </svg>
-            <span className="text-[10px] text-warm-white/40 tracking-wide-luxury uppercase">
-              Two Tickets. One Cabin. No Exceptions.
-            </span>
-          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — bottom right */}
       <div
-        className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 transition-all duration-1000 delay-[3s] ease-expo ${
+        className={`absolute bottom-20 lg:bottom-28 right-8 lg:right-12 z-10 flex flex-col items-center gap-3 transition-all duration-1000 ease-expo ${
           mounted ? "opacity-30" : "opacity-0"
         }`}
+        style={{ transitionDelay: "2s" }}
       >
-        <div className="w-px h-10 bg-gradient-to-b from-warm-white/40 to-transparent" />
+        <span className="text-[9px] tracking-[0.3em] uppercase text-warm-white/40 [writing-mode:vertical-lr]">
+          Scroll
+        </span>
+        <div className="w-px h-12 bg-gradient-to-b from-warm-white/30 to-transparent" />
       </div>
     </section>
   );
