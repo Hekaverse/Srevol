@@ -5,6 +5,8 @@ import Providers from "@/components/Providers";
 import CookieConsent from "@/components/CookieConsent";
 import Toaster from "@/components/Toaster";
 import CustomCursor from "@/components/CustomCursor";
+import FilmGrain from "@/components/FilmGrain";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -39,7 +41,9 @@ export default function RootLayout({
       className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-obsidian text-warm-white font-sans">
+        <LoadingScreen />
         <CustomCursor />
+        <FilmGrain />
         <Providers>
           {children}
           <CookieConsent />
