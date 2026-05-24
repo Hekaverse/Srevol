@@ -3,10 +3,10 @@ generator client {
 }
 
 datasource db {
-  // NOTE: Use "sqlite" for local dev (file:./dev.db).
-  // Change to "postgresql" before production deployment.
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  // For local dev with SQLite, override via: env("DATABASE_URL") = "file:./dev.db"
+  // and temporarily change provider to "sqlite". Production requires PostgreSQL.
 }
 
 model User {
