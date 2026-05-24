@@ -41,7 +41,6 @@ export default function HeroSection() {
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: `url(${src})`,
-              filter: "grayscale(100%) contrast(1.2)",
               transform: "scale(1.1)",
             }}
           />
