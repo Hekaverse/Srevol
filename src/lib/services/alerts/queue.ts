@@ -90,8 +90,8 @@ export async function checkBookingWindowAlerts() {
     await queueAlert({
       bucketId: bucket.id,
       alertType: "BOOKING_WINDOW_OPENED",
-      title: "It's time to book!",
-      message: `Your booking window is now open. You've saved ${(bucket.savedAmount / 100).toFixed(0)} toward your ${bucket.tier?.name || "trip"}. Ready to make it real?`,
+      title: "It's time to reserve!",
+      message: `Your reservation window is now open. You've contributed ${(bucket.savedAmount / 100).toFixed(0)} toward your ${bucket.tier?.name || "departure"}. Ready to make it real?`,
       channel: "IN_APP",
     });
   }

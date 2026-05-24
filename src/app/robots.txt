@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /trips/
+Disallow: /couple/
+Disallow: /profile/
+
+Sitemap: https://srevol.com/sitemap.xml

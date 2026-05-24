@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { apiRateLimit } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const limit = await apiRateLimit(request);
+  if (!limit.success) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
   try {
     const tiers = await db.budgetTier.findMany({
       where: { isActive: true },
@@ -25,9 +33,9 @@ export async function GET() {
         accentColor: t.accentColor,
       })),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to fetch tiers" },
       { status: 500 }
     );
   }

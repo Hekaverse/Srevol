@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { authRateLimit } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 requests per 15 minutes per IP
+  const limit = await authRateLimit(request);
+  if (!limit.success) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const { token, password } = await request.json();
 
@@ -49,8 +59,7 @@ export async function POST(request: Request) {
       success: true,
       message: "Password updated successfully. You can now log in.",
     });
-  } catch (error) {
-    console.error("Reset password error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Something went wrong" },
       { status: 500 }

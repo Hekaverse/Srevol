@@ -9,15 +9,15 @@ export default function GlobalError({
 }) {
   return (
     <html>
-      <body className="min-h-screen bg-plum-900 flex items-center justify-center px-4">
+      <body className="min-h-screen bg-obsidian flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="font-serif text-5xl font-bold text-rose-gold mb-4">Something broke</h1>
+          <h1 className="font-serif text-5xl font-bold text-ember mb-4">Something broke</h1>
           <p className="text-warm-white/50 mb-8">
             We&apos;re sorry — an unexpected error occurred. Our team has been notified.
           </p>
           <button
             onClick={reset}
-            className="px-6 py-3 text-sm font-medium text-plum-900 bg-rose-gold rounded-full hover:bg-rose-gold-light transition-all"
+            className="px-6 py-3 text-sm font-medium text-warm-white bg-ember rounded-full hover:bg-ember-dark transition-all"
           >
             Try Again
           </button>

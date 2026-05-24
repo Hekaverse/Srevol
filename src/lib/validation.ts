@@ -9,7 +9,7 @@ export const registerSchema = z.object({
     .regex(/[A-Z]/, "Password must contain an uppercase letter")
     .regex(/[a-z]/, "Password must contain a lowercase letter")
     .regex(/[0-9]/, "Password must contain a number"),
-  partnerEmail: z.string().email("Invalid partner email").optional().or(z.literal("")),
+  partnerEmail: z.string().email("Invalid co-traveler email").optional().or(z.literal("")),
 });
 
 export const loginSchema = z.object({
@@ -19,7 +19,7 @@ export const loginSchema = z.object({
 
 export const createBucketSchema = z.object({
   tierId: z.string().min(1, "Tier is required"),
-  coupleId: z.string().min(1, "Couple ID is required"),
+  coupleId: z.string().min(1, "Traveling party ID is required"),
   targetAmount: z.number().positive().optional(),
   months: z.number().int().min(12).max(48).optional(),
   initialDeposit: z.number().min(0).optional(),
@@ -28,7 +28,7 @@ export const createBucketSchema = z.object({
 });
 
 export const buildPackageSchema = z.object({
-  destination: z.string().min(1, "Destination is required"),
+  destination: z.string().min(1, "Route is required"),
   duration: z.number().int().positive().max(30),
   budgetMax: z.number().positive().optional(),
 });
@@ -40,7 +40,7 @@ export const createBookingSchema = z.object({
 });
 
 export const processPaymentSchema = z.object({
-  bucketId: z.string().min(1, "Bucket ID is required"),
+  paymentPlanId: z.string().min(1, "Fare commitment ID is required"),
   amount: z.number().positive(),
 });
 

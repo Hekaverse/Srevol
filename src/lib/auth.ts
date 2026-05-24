@@ -2,10 +2,10 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
+import { env } from "./env";
 
 export const authConfig = {
-  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
-  trustHost: true,
+  secret: env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       name: "credentials",
@@ -35,7 +35,7 @@ export const authConfig = {
             email: user.email,
             name: user.name,
             image: user.image,
-            role: user.role,
+            role: user.role ?? "USER",
           };
         } catch (err) {
           console.error("[auth] authorize error:", err);
@@ -51,7 +51,7 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
-        token.role = user.role;
+        token.role = user.role ?? "USER";
         token.id = user.id;
       }
       return token;
@@ -59,9 +59,22 @@ export const authConfig = {
     async session({ session, token }: { session: any; token: any }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = (token.role as string) ?? "USER";
       }
       return session;
+    },
+    authorized({ auth, request: { nextUrl } }: { auth: any; request: { nextUrl: URL } }) {
+      const isLoggedIn = !!auth?.user;
+      const isAdmin = auth?.user?.role === "ADMIN";
+      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+      const isAdminApi = ["/api/seed", "/api/curator", "/api/prices/sync", "/api/alerts"].some((route) =>
+        nextUrl.pathname.startsWith(route)
+      );
+
+      if (isAdminRoute || isAdminApi) {
+        return isLoggedIn && isAdmin;
+      }
+      return true;
     },
   },
 };

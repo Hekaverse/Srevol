@@ -2,32 +2,46 @@ import { db } from "@/lib/db";
 
 export interface PackageAssemblyConfig {
   destination: string;
-  duration: number; // days
+  duration: number;
   tierId?: string;
-  budgetMax?: number; // in cents
+  budgetMax?: number;
+}
+
+export interface HotelOption {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string | null;
+  starRating: number | null;
+  reviewScore: number | null;
+  reviewCount: number | null;
+  description: string | null;
+}
+
+export interface FlightOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+export interface ActivityOption {
+  id: string;
+  name: string;
+  price: number;
+  romanceScore: number;
+  description: string | null;
 }
 
 export interface AssembledPackage {
-  hotel: {
-    id: string;
-    name: string;
-    price: number;
-    imageUrl: string | null;
-    starRating: number | null;
-  };
-  flights: {
-    id: string;
-    name: string;
-    price: number;
-  }[];
-  activities: {
-    id: string;
-    name: string;
-    price: number;
-    dayOffset: number;
-  }[];
+  availableHotels: HotelOption[];
+  availableFlights: FlightOption[];
+  availableActivities: ActivityOption[];
+  selectedHotelId: string;
+  selectedFlightId: string;
+  selectedActivityIds: string[];
   totalPrice: number;
   nightlyRate: number;
+  duration: number;
 }
 
 export async function assemblePackage(
@@ -35,7 +49,6 @@ export async function assemblePackage(
 ): Promise<AssembledPackage | null> {
   const { destination, duration, budgetMax } = config;
 
-  // Parallelize independent queries
   const [hotels, allFlights, activities] = await Promise.all([
     db.travelProduct.findMany({
       where: {
@@ -63,44 +76,57 @@ export async function assemblePackage(
         isActive: true,
       },
       orderBy: [{ romanceScore: "desc" }, { reviewScore: "desc" }],
-      take: 8,
+      take: 10,
     }),
   ]);
 
   if (hotels.length === 0) return null;
-  const hotel = hotels[0];
 
-  // Pick middle-tier flight (best value for couples)
-  const selectedFlight = allFlights.length >= 2 ? allFlights[1] : allFlights[0];
-  const flights = selectedFlight ? [selectedFlight] : [];
-
-  // Select top activities and distribute across days
-  const selectedActivities = activities.slice(0, Math.min(activities.length, Math.floor(duration / 2)));
-  const activitySchedule = selectedActivities.map((act, i) => ({
-    id: act.id,
-    name: act.name,
-    price: act.basePrice,
-    dayOffset: Math.min(i * 2 + 1, duration - 1),
+  const hotelOptions: HotelOption[] = hotels.map((h) => ({
+    id: h.id,
+    name: h.name,
+    price: h.basePrice,
+    imageUrl: h.imageUrl,
+    starRating: h.starRating,
+    reviewScore: h.reviewScore,
+    reviewCount: h.reviewCount,
+    description: h.description,
   }));
 
-  // Calculate total
-  const hotelTotal = hotel.basePrice * duration;
-  const flightTotal = flights.reduce((sum, f) => sum + f.basePrice, 0);
-  const activityTotal = activitySchedule.reduce((sum, a) => sum + a.price, 0);
+  const flightOptions: FlightOption[] = allFlights.map((f) => ({
+    id: f.id,
+    name: f.name,
+    price: f.basePrice,
+  }));
+
+  const activityOptions: ActivityOption[] = activities.map((a) => ({
+    id: a.id,
+    name: a.name,
+    price: a.basePrice,
+    romanceScore: a.romanceScore,
+    description: a.description,
+  }));
+
+  // Defaults
+  const selectedHotel = hotels[0];
+  const selectedFlight = allFlights.length >= 2 ? allFlights[1] : allFlights[0] || null;
+  const defaultActivities = activities.slice(0, Math.min(activities.length, Math.floor(duration / 2)));
+
+  const hotelTotal = selectedHotel.basePrice * duration;
+  const flightTotal = selectedFlight ? selectedFlight.basePrice : 0;
+  const activityTotal = defaultActivities.reduce((sum, a) => sum + a.basePrice, 0);
   const totalPrice = hotelTotal + flightTotal + activityTotal;
 
   return {
-    hotel: {
-      id: hotel.id,
-      name: hotel.name,
-      price: hotel.basePrice,
-      imageUrl: hotel.imageUrl,
-      starRating: hotel.starRating,
-    },
-    flights: flights.map((f) => ({ id: f.id, name: f.name, price: f.basePrice })),
-    activities: activitySchedule,
+    availableHotels: hotelOptions,
+    availableFlights: flightOptions,
+    availableActivities: activityOptions,
+    selectedHotelId: selectedHotel.id,
+    selectedFlightId: selectedFlight?.id || "",
+    selectedActivityIds: defaultActivities.map((a) => a.id),
     totalPrice,
-    nightlyRate: hotel.basePrice,
+    nightlyRate: selectedHotel.basePrice,
+    duration,
   };
 }
 
@@ -125,24 +151,24 @@ export async function generatePackageForBucket(bucketId: string) {
 
     if (!assembled) throw new Error("Could not assemble package");
 
-    // Find matching template
     const template = await tx.packageTemplate.findFirst({
       where: { destination: { contains: destination }, isActive: true },
     });
 
-    // Create generated package record
     const generated = await tx.generatedPackage.create({
       data: {
         templateId: template?.id || null,
         bucketId: bucket.id,
         assembledProducts: JSON.stringify({
-          hotelId: assembled.hotel.id,
-          flightIds: assembled.flights.map((f) => f.id),
-          activityIds: assembled.activities.map((a) => a.id),
+          hotelId: assembled.selectedHotelId,
+          flightId: assembled.selectedFlightId,
+          activityIds: assembled.selectedActivityIds,
           pricesAtGeneration: {
-            hotel: assembled.hotel.price,
-            flights: assembled.flights.reduce((s, f) => s + f.price, 0),
-            activities: assembled.activities.reduce((s, a) => s + a.price, 0),
+            hotel: assembled.availableHotels.find((h) => h.id === assembled.selectedHotelId)?.price || 0,
+            flight: assembled.availableFlights.find((f) => f.id === assembled.selectedFlightId)?.price || 0,
+            activities: assembled.availableActivities
+              .filter((a) => assembled.selectedActivityIds.includes(a.id))
+              .reduce((s, a) => s + a.price, 0),
           },
         }),
         totalPrice: assembled.totalPrice,
@@ -150,13 +176,12 @@ export async function generatePackageForBucket(bucketId: string) {
       },
     });
 
-    // Queue alert
     await tx.alertQueue.create({
       data: {
         bucketId: bucket.id,
         alertType: "PACKAGE_GENERATED",
         title: "Your dream package is ready",
-        message: `We've assembled a ${destination} escape based on your ${bucket.tier?.name || "savings plan"}. Total: $${(assembled.totalPrice / 100).toFixed(0)}`,
+        message: `We've assembled a ${destination} route based on your ${bucket.tier?.name || "fare commitment"}. Total: $${(assembled.totalPrice / 100).toFixed(0)}`,
         channel: "IN_APP",
       },
     });

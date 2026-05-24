@@ -77,10 +77,9 @@ export async function POST(request: Request) {
         inflationBuffer: bucket.inflationBufferApplied,
       },
     });
-  } catch (error) {
-    console.error("Bucket creation error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to create bucket" },
       { status: 500 }
     );
   }
@@ -138,10 +137,9 @@ export async function GET(request: Request) {
         createdAt: b.createdAt,
       })),
     });
-  } catch (error) {
-    console.error("Bucket fetch error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to fetch buckets" },
       { status: 500 }
     );
   }

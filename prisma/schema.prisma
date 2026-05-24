@@ -3,7 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  // NOTE: Use "sqlite" for local dev (file:./dev.db).
+  // Change to "postgresql" before production deployment.
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -27,18 +29,24 @@ model User {
 }
 
 model Couple {
-  id            String         @id @default(cuid())
-  name          String?
-  partner1Id    String         @unique
-  partner2Id    String         @unique
-  anniversary   DateTime?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  bookings      Booking[]
-  budgetBuckets BudgetBucket[]
-  countdowns    Countdown[]
-  partner2      User           @relation("Partner2", fields: [partner2Id], references: [id])
-  partner1      User           @relation("Partner1", fields: [partner1Id], references: [id])
+  id               String         @id @default(cuid())
+  name             String?
+  partner1Id       String         @unique
+  partner2Id       String?        @unique
+  anniversary      DateTime?
+  invitationToken   String?        @unique
+  invitationEmail   String?
+  invitationExpires DateTime?
+  referralCode     String?        @unique
+  referredByCoupleId String?
+  referralCredit   Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  bookings         Booking[]
+  budgetBuckets    BudgetBucket[]
+  countdowns       Countdown[]
+  partner2         User?          @relation("Partner2", fields: [partner2Id], references: [id])
+  partner1         User           @relation("Partner1", fields: [partner1Id], references: [id])
 
   @@map("couples")
 }
@@ -113,6 +121,7 @@ model BudgetTier {
   updatedAt            DateTime          @updatedAt
   buckets              BudgetBucket[]
   packages             PackageTemplate[]
+  bookings             Booking[]
 
   @@map("budget_tiers")
 }
@@ -285,6 +294,7 @@ model Booking {
   id              String           @id @default(cuid())
   coupleId        String
   packageId       String
+  tierId          String?
   status          String           @default("PENDING")
   basePrice       Int
   addOnsTotal     Int              @default(0)
@@ -299,6 +309,7 @@ model Booking {
   addOnSelections AddOnSelection[]
   package         Package          @relation(fields: [packageId], references: [id])
   couple          Couple           @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  tier            BudgetTier?      @relation(fields: [tierId], references: [id])
   countdown       Countdown?
   paymentPlan     PaymentPlan?
 
@@ -306,17 +317,19 @@ model Booking {
 }
 
 model PaymentPlan {
-  id            String    @id @default(cuid())
-  bookingId     String    @unique
-  totalAmount   Int
-  months        Int
-  monthlyAmount Int
-  startDate     DateTime
-  status        String    @default("ACTIVE")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  payments      Payment[]
+  id              String    @id @default(cuid())
+  bookingId       String    @unique
+  totalAmount     Int
+  months          Int
+  monthlyAmount   Int
+  startDate       DateTime
+  status          String    @default("ACTIVE")
+  stripeCustomerId String?
+  stripePaymentMethodId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  payments        Payment[]
 
   @@map("payment_plans")
 }

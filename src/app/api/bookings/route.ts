@@ -80,7 +80,7 @@ export async function POST(request: Request) {
           coupleId: couple.id,
           bookingId: booking.id,
           targetDate,
-          message: `Your ${bucket.tier.name} escape to ${pkg.destination}`,
+          message: `Your ${bucket.tier.name} departure to ${pkg.destination}`,
         },
       });
 
@@ -94,10 +94,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, data: result });
-  } catch (error) {
-    console.error("Booking error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Reservation failed" },
       { status: 500 }
     );
   }
@@ -135,10 +134,9 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({ success: true, bookings });
-  } catch (error) {
-    console.error("Fetch bookings error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to fetch bookings" },
       { status: 500 }
     );
   }

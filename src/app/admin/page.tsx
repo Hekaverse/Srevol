@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const cards = [
     {
       title: "Price Intelligence",
-      desc: "Sync real-time prices from travel APIs, view historical trends, and monitor price drops.",
+      desc: "Sync real-time fares from carrier APIs, view historical trends, and monitor fare drops.",
       href: "/admin/prices",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-plum-900">
+    <div className="min-h-screen bg-obsidian">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-12">
           <div>
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
           <button
             onClick={runSeed}
             disabled={seedStatus === "loading"}
-            className="px-6 py-2.5 text-sm font-medium text-plum-900 bg-rose-gold rounded-full hover:bg-rose-gold-light transition-all disabled:opacity-50"
+            className="px-6 py-2.5 text-sm font-medium text-obsidian bg-ember rounded-full hover:bg-ember-light transition-all disabled:opacity-50"
           >
             {seedStatus === "loading" ? "Seeding..." : "Run Full Seed"}
           </button>
@@ -94,14 +94,14 @@ export default function AdminDashboard() {
             <Link
               key={card.title}
               href={card.href}
-              className="group p-8 bg-plum-800/50 rounded-2xl border border-plum-700/30 hover:border-rose-gold/30 transition-all"
+              className="group p-8 bg-obsidian-light/50 rounded-2xl border border-obsidian-muted/30 hover:border-ember/30 transition-all"
             >
-              <div className="text-rose-gold mb-4">{card.icon}</div>
-              <h3 className="text-lg font-bold text-warm-white group-hover:text-rose-gold transition-colors">
+              <div className="text-ember mb-4">{card.icon}</div>
+              <h3 className="text-lg font-bold text-warm-white group-hover:text-ember transition-colors">
                 {card.title}
               </h3>
               <p className="mt-2 text-sm text-warm-white/40 leading-relaxed">{card.desc}</p>
-              <span className="mt-4 inline-block text-sm text-rose-gold group-hover:translate-x-1 transition-transform">
+              <span className="mt-4 inline-block text-sm text-ember group-hover:translate-x-1 transition-transform">
                 Open →
               </span>
             </Link>

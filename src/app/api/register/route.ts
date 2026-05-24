@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { registerSchema } from "@/lib/validation";
+import { authRateLimit } from "@/lib/rate-limit";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 requests per 15 minutes per IP
+  const limit = await authRateLimit(request);
+  if (!limit.success) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);
@@ -17,69 +27,34 @@ export async function POST(request: Request) {
 
     const { name, email, password, partnerEmail } = parsed.data;
 
-    // Check if user already exists
-    const existing = await db.user.findUnique({ where: { email } });
+    const existing = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
     if (existing) {
       return NextResponse.json(
-        { success: false, error: "An account with this email already exists" },
+        { success: false, error: "Email already registered" },
         { status: 409 }
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user and couple in a transaction
-    const result = await db.$transaction(async (tx) => {
-      // Create user
-      const user = await tx.user.create({
-        data: {
-          email,
-          name,
-          password: hashedPassword,
-          role: "USER",
-        },
-      });
-
-      // Create a placeholder partner user if partnerEmail provided
-      let partner = null;
-      if (partnerEmail && partnerEmail !== email) {
-        partner = await tx.user.create({
-          data: {
-            email: partnerEmail,
-            name: null,
-            password: null,
-            role: "USER",
-          },
-        });
-      }
-
-      // Create couple
-      const couple = await tx.couple.create({
-        data: {
-          name: `${name} & Partner`,
-          partner1Id: user.id,
-          partner2Id: partner?.id || user.id,
-        },
-      });
-
-      return { user, couple };
+    const user = await db.user.create({
+      data: {
+        email: email.toLowerCase(),
+        name,
+        password: hashedPassword,
+        role: "USER",
+      },
     });
 
     return NextResponse.json({
       success: true,
-      data: {
-        userId: result.user.id,
-        coupleId: result.couple.id,
-        email: result.user.email,
-        name: result.user.name,
-      },
+      userId: user.id,
     });
-  } catch (error) {
-    console.error("Registration error:", error);
-    const message = error instanceof Error ? error.message : "Failed to create account. Please try again.";
+  } catch {
     return NextResponse.json(
-      { success: false, error: message },
+      { success: false, error: "Failed to create profile. Please try again." },
       { status: 500 }
     );
   }

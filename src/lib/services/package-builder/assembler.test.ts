@@ -65,6 +65,6 @@ describe("assemblePackage", () => {
     const result = await assemblePackage({ destination: "Santorini", duration: 7 });
     expect(result).not.toBeNull();
     expect(result?.totalPrice).toBe(20000 * 7 + 50000 + 10000);
-    expect(result?.hotel.name).toBe("Test Hotel");
+    expect(result?.availableHotels[0]?.name).toBe("Test Hotel");
   });
 });

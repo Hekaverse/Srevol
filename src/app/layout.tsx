@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import CookieConsent from "@/components/CookieConsent";
 import Toaster from "@/components/Toaster";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const inter = Inter({
@@ -17,12 +17,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SREVOL — For Lovers Who Travel",
-  description: "The couples travel experience. Plan, save, and countdown to your perfect getaway together. Honeymoons, anniversaries, and romantic escapes made effortless.",
-  keywords: ["couples travel", "honeymoon", "romantic getaway", "travel payment plans", "anniversary trips"],
+  title: "SREVOL — The Private Carrier for Two",
+  description: "Reserve your route. Lock your fare. The private carrier for two — from essential departures to transcendent routes.",
+  keywords: ["private carrier", "couples carrier", "luxury carrier", "fare lock", "milestone departure", "celebration route", "romantic route"],
   openGraph: {
-    title: "SREVOL — For Lovers Who Travel",
-    description: "Plan your perfect escape together. The couples-first travel experience.",
+    title: "SREVOL — The Private Carrier for Two",
+    description: "Reserve your route. Lock your fare. Let the anticipation carry you there.",
     type: "website",
   },
 };
@@ -35,9 +35,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-cream text-rich-brown font-sans">
+      <body className="min-h-full flex flex-col bg-obsidian text-warm-white font-sans">
         <Providers>
           {children}
           <CookieConsent />

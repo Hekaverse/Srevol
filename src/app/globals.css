@@ -4,40 +4,34 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif;
-  
-  /* SREVOL Premium Palette — Deep, Warm, Distinctive */
-  --color-cream: #FAF6F1;
-  --color-cream-dark: #F5EDE4;
-  --color-warm-white: #FFF9F5;
-  
-  --color-plum-50: #F5F0F5;
-  --color-plum-100: #E8DFE8;
-  --color-plum-200: #D4C4D4;
-  --color-plum-300: #B89CB8;
-  --color-plum-400: #9A729A;
-  --color-plum-500: #7D527D;
-  --color-plum-600: #653D65;
-  --color-plum-700: #4E2E4E;
-  --color-plum-800: #3A223A;
-  --color-plum-900: #1C1427;
-  
-  --color-rose-gold: #D4A574;
-  --color-rose-gold-light: #E8C9A0;
-  --color-rose-gold-dark: #B88A5A;
-  
-  --color-blush: #C97B7B;
-  --color-blush-light: #E8B4B4;
-  --color-blush-dark: #A85A5A;
-  
-  --color-rich-brown: #2D2424;
-  --color-rich-brown-light: #4A3F3F;
-  --color-rich-brown-muted: #8A7A7A;
+  --font-serif: var(--font-serif), Georgia, serif;
+
+  /* ============================================
+     SREVOL — Volcanic & Ember Palette
+     Deep charcoal, burnt sienna, warm amber
+     ============================================ */
+
+  --color-obsidian: #0C0C0C;
+  --color-obsidian-light: #151515;
+  --color-obsidian-muted: #252525;
+
+  --color-ember: #C76B4A;
+  --color-ember-light: #E08A6A;
+  --color-ember-dark: #A0553A;
+
+  --color-amber: #D4A056;
+  --color-amber-light: #E8C07A;
+
+  --color-ivory: #F5F0EB;
+  --color-ivory-dark: #E8E0D6;
+
+  --color-stone: #8A827A;
+  --color-warm-white: #FAF7F2;
 }
 
 :root {
-  --background: #FAF6F1;
-  --foreground: #2D2424;
+  --background: #0C0C0C;
+  --foreground: #FAF7F2;
 }
 
 html {
@@ -60,32 +54,21 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D4C4D4;
+  background: #252525;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B89CB8;
+  background: #3A3A3A;
 }
 
 ::selection {
-  background: #C97B7B;
-  color: #FFF9F5;
+  background: #C76B4A;
+  color: #FAF7F2;
 }
 
 /* ============================================
-   CUSTOM ANIMATIONS
+   CORE ANIMATIONS (kept, refined)
    ============================================ */
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-12px) rotate(2deg); }
-  66% { transform: translateY(6px) rotate(-1deg); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-20px) translateX(10px); }
-}
 
 @keyframes breathe {
   0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -98,32 +81,8 @@ body {
 }
 
 @keyframes reveal-up {
-  from { opacity: 0; transform: translateY(40px); }
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes letter-flip {
-  0% { transform: rotateY(0deg); }
-  50% { transform: rotateY(90deg); }
-  100% { transform: rotateY(0deg); }
-}
-
-@keyframes draw-line {
-  from { stroke-dashoffset: 1000; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(212, 165, 116, 0.4); }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 8s ease-in-out infinite;
 }
 
 .animate-breathe {
@@ -136,13 +95,13 @@ body {
 }
 
 .animate-reveal-up {
-  animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Stagger children */
 .stagger-children > * {
   opacity: 0;
-  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
 .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
@@ -150,11 +109,6 @@ body {
 .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
 .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
-
-/* Magnetic button effect base */
-.magnetic-btn {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 /* Horizontal scroll snap */
 .scroll-snap-x {
@@ -174,30 +128,130 @@ body {
   display: none;
 }
 
-/* Text gradient */
-.text-gradient-gold {
-  background: linear-gradient(135deg, #D4A574 0%, #E8C9A0 50%, #B88A5A 100%);
+/* Text gradient — Ember to Amber */
+.text-gradient-ember {
+  background: linear-gradient(135deg, #C76B4A 0%, #D4A056 50%, #E08A6A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glass morphism */
+/* Glass morphism — updated for obsidian */
 .glass {
-  background: rgba(250, 246, 241, 0.7);
+  background: rgba(12, 12, 12, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
-.glass-dark {
-  background: rgba(28, 20, 39, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* Premium easing */
+.ease-expo {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Line drawing animation */
-.draw-line {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw-line 2s ease-out forwards;
+/* Letter spacing for luxury feel */
+.tracking-luxury {
+  letter-spacing: 0.02em;
+}
+.tracking-wide-luxury {
+  letter-spacing: 0.15em;
+}
+
+/* Premium underline animation */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Glow effects — ember */
+.glow-ember {
+  box-shadow: 0 0 40px rgba(199, 107, 74, 0.15), 0 0 80px rgba(199, 107, 74, 0.05);
+}
+
+.glow-subtle {
+  box-shadow: 0 0 60px rgba(199, 107, 74, 0.08);
+}
+
+/* Premium border treatment */
+.border-luxury {
+  border: 1px solid rgba(199, 107, 74, 0.12);
+}
+
+/* Scale on hover with spring */
+.hover-lift {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Image zoom on hover */
+.img-zoom {
+  overflow: hidden;
+}
+.img-zoom img,
+.img-zoom > div {
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.img-zoom:hover img,
+.img-zoom:hover > div {
+  transform: scale(1.05);
+}
+
+/* Premium divider */
+.divider-luxury {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(199, 107, 74, 0.3), transparent);
+}
+
+/* Skeleton shimmer — for obsidian backgrounds */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Focus ring */
+.focus-luxury:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(199, 107, 74, 0.5), 0 0 0 4px #0C0C0C;
+}
+
+/* Loading spinner */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* Departure board ticker */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-scroll 40s linear infinite;
 }

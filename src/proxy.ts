@@ -1,60 +1,116 @@
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const ADMIN_PATHS = ["/admin", "/admin/curator", "/admin/packages", "/admin/prices"];
 const PROTECTED_PATHS = ["/dashboard", "/countdown"];
+const ADMIN_API_PATHS = ["/api/seed", "/api/curator", "/api/prices/sync", "/api/alerts"];
 
-// Check session cookie presence (NextAuth v5 beta auth() is broken in middleware)
-function hasSessionCookie(request: NextRequest): boolean {
-  return !!(
-    request.cookies.get("__Secure-authjs.session-token")?.value ||
-    request.cookies.get("authjs.session-token")?.value ||
-    request.cookies.get("__Host-authjs.session-token")?.value
-  );
+const ALLOWED_ORIGINS = [
+  "https://srevol.com",
+  "https://www.srevol.com",
+];
+
+function getOrigin(request: NextRequest): string | null {
+  return request.headers.get("origin");
+}
+
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return true; // Same-origin requests have no Origin header
+  return ALLOWED_ORIGINS.includes(origin);
 }
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const origin = getOrigin(request);
 
-  // Admin protection — also check cookie + role via header if possible
-  if (ADMIN_PATHS.some((p) => pathname.startsWith(p))) {
-    // For admin, require valid session cookie at minimum
-    // The page itself will do stricter role checks client-side
-    if (!hasSessionCookie(request)) {
-      return NextResponse.redirect(new URL("/login", request.url));
+  // ─────────────────────────────────────────────
+  // CORS preflight for API routes
+  // ─────────────────────────────────────────────
+  if (pathname.startsWith("/api") && request.method === "OPTIONS") {
+    if (!isAllowedOrigin(origin)) {
+      return new NextResponse(null, { status: 403 });
+    }
+    const response = new NextResponse(null, { status: 204 });
+    response.headers.set("Access-Control-Allow-Origin", origin || ALLOWED_ORIGINS[0]);
+    response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+    response.headers.set("Access-Control-Max-Age", "86400");
+    return response;
+  }
+
+  // ─────────────────────────────────────────────
+  // JWT verification (edge-safe)
+  // ─────────────────────────────────────────────
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const isLoggedIn = !!token;
+  const isAdmin = token?.role === "ADMIN";
+
+  // ─────────────────────────────────────────────
+  // Admin route + API protection (role-based)
+  // ─────────────────────────────────────────────
+  const isAdminRoute = ADMIN_PATHS.some((p) => pathname.startsWith(p));
+  const isAdminApi = ADMIN_API_PATHS.some((p) => pathname.startsWith(p));
+
+  if (isAdminRoute || isAdminApi) {
+    if (!isLoggedIn) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    if (!isAdmin) {
+      // Frontend: redirect home. API: return 403 JSON.
+      if (pathname.startsWith("/api")) {
+        return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  // Auth protection — check session cookie presence
+  // ─────────────────────────────────────────────
+  // Protected app routes
+  // ─────────────────────────────────────────────
   if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) {
-    if (!hasSessionCookie(request)) {
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!isLoggedIn) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
-  // Redirect logged-in users away from login/register pages
+  // ─────────────────────────────────────────────
+  // Redirect logged-in users away from auth pages
+  // ─────────────────────────────────────────────
   if (pathname === "/login" || pathname === "/register") {
-    if (hasSessionCookie(request)) {
+    if (isLoggedIn) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
-  // Security headers
+  // ─────────────────────────────────────────────
+  // CORS for actual API responses
+  // ─────────────────────────────────────────────
   const response = NextResponse.next();
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self' https://*.vercel.app;"
-  );
-  response.headers.set(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains; preload"
-  );
+
+  if (pathname.startsWith("/api")) {
+    if (!isAllowedOrigin(origin)) {
+      return NextResponse.json(
+        { success: false, error: "Forbidden" },
+        { status: 403 }
+      );
+    }
+    response.headers.set("Access-Control-Allow-Origin", origin || ALLOWED_ORIGINS[0]);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)"],
 };

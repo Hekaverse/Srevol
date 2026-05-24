@@ -29,10 +29,9 @@ export async function GET() {
       couple,
       buckets,
     });
-  } catch (error) {
-    console.error("Dashboard data error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to load dashboard" },
       { status: 500 }
     );
   }

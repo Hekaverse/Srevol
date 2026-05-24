@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { z } from "zod";
-
-const paymentSchema = z.object({
-  paymentPlanId: z.string().min(1),
-  amount: z.number().positive(),
-});
+import { processPaymentSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +11,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const parsed = paymentSchema.safeParse(body);
+    const parsed = processPaymentSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
         { success: false, error: parsed.error.issues[0].message },
@@ -71,10 +66,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, payment: result });
-  } catch (error) {
-    console.error("Payment error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Payment failed" },
       { status: 500 }
     );
   }
@@ -100,10 +94,9 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json({ success: true, payments });
-  } catch (error) {
-    console.error("Fetch payments error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to fetch payments" },
       { status: 500 }
     );
   }

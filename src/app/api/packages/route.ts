@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { apiRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const limit = await apiRateLimit(request);
+  if (!limit.success) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category") || undefined;
@@ -37,8 +45,10 @@ export async function GET(request: Request) {
         slug: t.slug,
         title: t.title,
         subtitle: t.subtitle,
+        description: t.description,
         destination: t.destination,
         image: t.image,
+        gallery: t.gallery ? JSON.parse(t.gallery) : [],
         basePrice: t.basePrice,
         duration: t.duration,
         category: t.category,
@@ -56,9 +66,9 @@ export async function GET(request: Request) {
         reviewScore: h.reviewScore,
       })),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to fetch packages" },
       { status: 500 }
     );
   }

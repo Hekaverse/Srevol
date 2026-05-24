@@ -1,6 +1,5 @@
 import { BaseAdapter, PriceQuery, FetchedProduct } from "./base";
 
-// Curated mock hotel data that feels real and romantic
 const MOCK_HOTELS: Record<string, FetchedProduct[]> = {
   "Santorini, Greece": [
     {
@@ -17,7 +16,7 @@ const MOCK_HOTELS: Record<string, FetchedProduct[]> = {
       reviewScore: 9.6,
       reviewCount: 842,
       amenities: ["Infinity Pool", "Spa", "Private Terrace", "Caldera View", "Champagne Breakfast"],
-      price: 185000, // $1,850/night
+      price: 185000,
       currency: "USD",
       productType: "HOTEL",
     },
@@ -36,24 +35,6 @@ const MOCK_HOTELS: Record<string, FetchedProduct[]> = {
       reviewCount: 1203,
       amenities: ["Infinity Pool", "Spa", "Fine Dining", "Caldera View", "Butler Service"],
       price: 210000,
-      currency: "USD",
-      productType: "HOTEL",
-    },
-    {
-      externalId: "sant-003",
-      name: "Grace Hotel Santorini",
-      description: "Intimate boutique hotel with stunning sunset views.",
-      destination: "Santorini, Greece",
-      country: "Greece",
-      latitude: 36.4245,
-      longitude: 25.4282,
-      imageUrl: "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed2a?w=800&h=600&fit=crop",
-      galleryUrls: [],
-      starRating: 5,
-      reviewScore: 9.5,
-      reviewCount: 678,
-      amenities: ["Infinity Pool", "Spa", "Private Dining", "Sunset View", "Yoga"],
-      price: 165000,
       currency: "USD",
       productType: "HOTEL",
     },
@@ -136,6 +117,266 @@ const MOCK_HOTELS: Record<string, FetchedProduct[]> = {
       productType: "HOTEL",
     },
   ],
+  "Bora Bora": [
+    {
+      externalId: "bora-001",
+      name: "The St. Regis Bora Bora",
+      description: "Mount Otemanu views from your overwater villa. Butler service and Miri Miri Spa.",
+      destination: "Bora Bora",
+      country: "French Polynesia",
+      latitude: -16.5004,
+      longitude: -151.7415,
+      imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.7,
+      reviewCount: 678,
+      amenities: ["Overwater Villa", "Butler Service", "Lagarium", "Spa", "Fine Dining"],
+      price: 420000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Bali, Indonesia": [
+    {
+      externalId: "bali-001",
+      name: "Capella Ubud",
+      description: "Tented camp in the Balinese jungle. Each tent has a private saltwater pool.",
+      destination: "Bali, Indonesia",
+      country: "Indonesia",
+      latitude: -8.5069,
+      longitude: 115.2625,
+      imageUrl: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.6,
+      reviewCount: 445,
+      amenities: ["Private Pool", "Jungle Views", "Campfire Dining", "Spa", "Rice Terrace Walks"],
+      price: 65000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Tulum, Mexico": [
+    {
+      externalId: "tulum-001",
+      name: "Azulik Tulum",
+      description: "Treehouse villas with no electricity. Candles, jungle, and the Caribbean Sea.",
+      destination: "Tulum, Mexico",
+      country: "Mexico",
+      latitude: 20.2114,
+      longitude: -87.4654,
+      imageUrl: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 4,
+      reviewScore: 9.1,
+      reviewCount: 1200,
+      amenities: ["Treehouse Villa", "Maya Spa", "Kin Toh Restaurant", "Jungle Views", "Beach Access"],
+      price: 55000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Costa Rica": [
+    {
+      externalId: "cr-001",
+      name: "Nayara Tented Camp",
+      description: "Luxury tents overlooking the Arenal volcano. Sloths in the trees, hot springs nearby.",
+      destination: "Costa Rica",
+      country: "Costa Rica",
+      latitude: 10.4631,
+      longitude: -84.7038,
+      imageUrl: "https://images.unsplash.com/photo-1518259102261-b40117eabbc9?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.5,
+      reviewCount: 389,
+      amenities: ["Private Hot Springs", "Volcano Views", "Spa", "Rainforest Walks", "Birdwatching"],
+      price: 48000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Algarve, Portugal": [
+    {
+      externalId: "alg-001",
+      name: "Vila Vita Parc",
+      description: "Clifftop resort with a Michelin-starred restaurant and a beach club carved into the rocks.",
+      destination: "Algarve, Portugal",
+      country: "Portugal",
+      latitude: 37.0891,
+      longitude: -8.3672,
+      imageUrl: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.4,
+      reviewCount: 723,
+      amenities: ["Michelin Dining", "Beach Club", "Spa", "Golf", "Clifftop Views"],
+      price: 52000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Marrakech, Morocco": [
+    {
+      externalId: "mar-001",
+      name: "Royal Mansour",
+      description: "Medina riads built by the king's artisans. Private courtyards, rooftop pools, and a legendary spa.",
+      destination: "Marrakech, Morocco",
+      country: "Morocco",
+      latitude: 31.6295,
+      longitude: -7.9811,
+      imageUrl: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.8,
+      reviewCount: 512,
+      amenities: ["Private Riad", "Hammam Spa", "Michelin Dining", "Rooftop Pool", "Medina Access"],
+      price: 58000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Seychelles": [
+    {
+      externalId: "sey-001",
+      name: "North Island",
+      description: "William and Kate's honeymoon island. Only 11 villas on a private island.",
+      destination: "Seychelles",
+      country: "Seychelles",
+      latitude: -4.3915,
+      longitude: 55.2860,
+      imageUrl: "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.9,
+      reviewCount: 156,
+      amenities: ["Private Island", "Personal Butler", "Dive Centre", "Turtle Nesting", "Helipad"],
+      price: 380000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Patagonia, Argentina": [
+    {
+      externalId: "pat-001",
+      name: "Explora El Chaltén",
+      description: "Remote lodge at the foot of Fitz Roy. All excursions included.",
+      destination: "Patagonia, Argentina",
+      country: "Argentina",
+      latitude: -49.3317,
+      longitude: -72.8863,
+      imageUrl: "https://images.unsplash.com/photo-1518182170546-0766bc6f9213?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 4,
+      reviewScore: 9.5,
+      reviewCount: 289,
+      amenities: ["All-Inclusive", "Guided Treks", "Spa", "Mountain Views", "Pool"],
+      price: 42000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Kenya": [
+    {
+      externalId: "ken-001",
+      name: "Angama Mara",
+      description: "Perched on the Great Rift Valley escarpment. Game drives in the Mara and hot air balloon safaris.",
+      destination: "Kenya",
+      country: "Kenya",
+      latitude: -1.2921,
+      longitude: 35.1234,
+      imageUrl: "https://images.unsplash.com/photo-1516426122078-c23e76319801?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.7,
+      reviewCount: 312,
+      amenities: ["Game Drives", "Balloon Safari", "Infinity Pool", "Photography Studio", "Bush Dining"],
+      price: 95000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Tromsø, Norway": [
+    {
+      externalId: "nor-001",
+      name: "Kakslauttanen Arctic Resort",
+      description: "Glass igloos for northern lights viewing. Husky safaris and ice restaurant.",
+      destination: "Tromsø, Norway",
+      country: "Norway",
+      latitude: 68.4194,
+      longitude: 27.4180,
+      imageUrl: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 4,
+      reviewScore: 9.2,
+      reviewCount: 890,
+      amenities: ["Glass Igloo", "Aurora Viewing", "Husky Safari", "Ice Restaurant", "Sauna"],
+      price: 38000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Paris, France": [
+    {
+      externalId: "par-001",
+      name: "Ritz Paris",
+      description: "The original palace hotel. Hemingway's bar, Chanel spa, and views of Place Vendôme.",
+      destination: "Paris, France",
+      country: "France",
+      latitude: 48.8683,
+      longitude: 2.3286,
+      imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.6,
+      reviewCount: 1234,
+      amenities: ["Chanel Spa", "Hemingway Bar", "Michelin Dining", "Indoor Pool", "Butler Service"],
+      price: 85000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Dubai, UAE": [
+    {
+      externalId: "dub-001",
+      name: "Burj Al Arab",
+      description: "The world's most luxurious hotel. Gold leaf interiors, helipad, and aquarium restaurant.",
+      destination: "Dubai, UAE",
+      country: "UAE",
+      latitude: 25.1413,
+      longitude: 55.1853,
+      imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.4,
+      reviewCount: 2100,
+      amenities: ["Gold Leaf Interiors", "Helipad", "Aquarium Restaurant", "Private Beach", "Butler Service"],
+      price: 110000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
+  "Zermatt, Switzerland": [
+    {
+      externalId: "zerm-001",
+      name: "Cervo Mountain Boutique Resort",
+      description: "Alpine-chic chalets with direct Matterhorn views. Ski-in, ski-out in winter.",
+      destination: "Zermatt, Switzerland",
+      country: "Switzerland",
+      latitude: 46.0207,
+      longitude: 7.7491,
+      imageUrl: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?w=800&h=600&fit=crop",
+      galleryUrls: [],
+      starRating: 5,
+      reviewScore: 9.5,
+      reviewCount: 567,
+      amenities: ["Matterhorn View", "Ski-in/Ski-out", "Spa", "Alpine Dining", "Pool"],
+      price: 95000,
+      currency: "USD",
+      productType: "HOTEL",
+    },
+  ],
 };
 
 export class MockHotelAdapter extends BaseAdapter {
@@ -143,7 +384,7 @@ export class MockHotelAdapter extends BaseAdapter {
   productTypes = ["HOTEL"] as const;
 
   async fetchPrices(query: PriceQuery): Promise<FetchedProduct[]> {
-    await this.delay(300 + Math.random() * 700); // Simulate API latency
+    await this.delay(300 + Math.random() * 700);
 
     const key = Object.keys(MOCK_HOTELS).find((k) =>
       query.destination.toLowerCase().includes(k.toLowerCase()) ||
@@ -153,8 +394,6 @@ export class MockHotelAdapter extends BaseAdapter {
     if (!key) return [];
 
     const hotels = MOCK_HOTELS[key];
-
-    // Add realistic price variation based on date
     const variation = this.getSeasonalMultiplier(query.checkInDate);
 
     return hotels.map((h) => ({
@@ -166,11 +405,8 @@ export class MockHotelAdapter extends BaseAdapter {
   private getSeasonalMultiplier(date?: Date): number {
     if (!date) return 1;
     const month = date.getMonth();
-    // Summer (Jun-Aug) and Dec holidays = peak
     if ([5, 6, 7, 11].includes(month)) return 1.3;
-    // Shoulder season
     if ([4, 8, 9, 10].includes(month)) return 1.1;
-    // Low season
     return 0.85;
   }
 }

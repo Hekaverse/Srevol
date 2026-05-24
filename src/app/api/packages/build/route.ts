@@ -33,10 +33,9 @@ export async function POST(request: Request) {
       success: true,
       package: assembled,
     });
-  } catch (error) {
-    console.error("Package build error:", error);
+  } catch {
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown" },
+      { success: false, error: "Failed to build package" },
       { status: 500 }
     );
   }

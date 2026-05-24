@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { authRateLimit } from "@/lib/rate-limit";
+import { sendPasswordResetEmail } from "@/lib/email";
+import { env } from "@/lib/env";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 requests per 15 minutes per IP
+  const limit = await authRateLimit(request);
+  if (!limit.success) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   try {
     const { email } = await request.json();
 
@@ -13,13 +25,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await db.user.findUnique({ where: { email: email.toLowerCase() } });
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
 
     // Always return success even if user not found (security)
     if (!user) {
       return NextResponse.json({
         success: true,
-        message: "If an account exists, a reset link has been sent.",
+        message: "If a profile exists, a reset link has been sent.",
       });
     }
 
@@ -34,18 +48,19 @@ export async function POST(request: Request) {
       },
     });
 
-    // In production, send email here with:
-    // https://srevol.com/reset-password?token=TOKEN
-    // For now, we return the token in the response for testing
+    const resetUrl = `${env.NEXTAUTH_URL}/reset-password?token=${token}`;
+    const emailResult = await sendPasswordResetEmail(user.email, resetUrl);
+
+    if (!emailResult.success) {
+      console.error("[forgot-password] Email failed:", emailResult.error);
+      // Don't expose email failure to user
+    }
+
     return NextResponse.json({
       success: true,
-      message: "If an account exists, a reset link has been sent.",
-      // Remove this in production — only for testing:
-      debugToken: token,
-      debugLink: `https://srevol.com/reset-password?token=${token}`,
+      message: "If a profile exists, a reset link has been sent.",
     });
-  } catch (error) {
-    console.error("Forgot password error:", error);
+  } catch {
     return NextResponse.json(
       { success: false, error: "Something went wrong" },
       { status: 500 }
