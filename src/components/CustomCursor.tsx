@@ -1,18 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const posRef = useRef({ x: -100, y: -100 });
+  const ringPosRef = useRef({ x: -100, y: -100 });
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    // Don't show custom cursor on touch devices
-    if (typeof window !== "undefined" && "ontouchstart" in window) return;
+    if (typeof window === "undefined" || "ontouchstart" in window) return;
 
     const onMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      posRef.current = { x: e.clientX, y: e.clientY };
       if (!isVisible) setIsVisible(true);
     };
 
@@ -31,53 +34,78 @@ export default function CustomCursor() {
       setIsHovering(isInteractive);
     };
 
+    // RAF loop for smooth but instant tracking
+    const animate = () => {
+      const dot = dotRef.current;
+      const ring = ringRef.current;
+      const target = posRef.current;
+
+      if (dot) {
+        dot.style.transform = `translate(${target.x - 3}px, ${target.y - 3}px)`;
+      }
+
+      if (ring) {
+        // Ring follows with very slight inertia (not lag, just weight)
+        ringPosRef.current.x += (target.x - ringPosRef.current.x) * 0.35;
+        ringPosRef.current.y += (target.y - ringPosRef.current.y) * 0.35;
+        const size = isHovering ? 48 : 24;
+        ring.style.transform = `translate(${ringPosRef.current.x - size / 2}px, ${ringPosRef.current.y - size / 2}px)`;
+      }
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseover", onElementHover);
     document.body.addEventListener("mouseenter", onMouseEnter);
     document.body.addEventListener("mouseleave", onMouseLeave);
+    rafRef.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseover", onElementHover);
       document.body.removeEventListener("mouseenter", onMouseEnter);
       document.body.removeEventListener("mouseleave", onMouseLeave);
+      cancelAnimationFrame(rafRef.current);
     };
-  }, [isVisible]);
+  }, [isVisible, isHovering]);
 
   if (typeof window !== "undefined" && "ontouchstart" in window) return null;
 
   return (
     <>
-      {/* Small dot — follows immediately */}
+      {/* Core dot — instant, no transition */}
       <div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+        ref={dotRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9999]"
         style={{
-          transform: `translate(${position.x - 2}px, ${position.y - 2}px)`,
+          width: 6,
+          height: 6,
           opacity: isVisible ? 1 : 0,
-          transition: "opacity 0.3s ease",
-        }}
-      >
-        <div className="w-1 h-1 bg-warm-white" />
-      </div>
-
-      {/* Outer ring — follows with delay, expands on hover */}
-      <div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          opacity: isVisible ? (isHovering ? 0.6 : 0.3) : 0,
-          transition: "transform 0.15s ease-out, opacity 0.3s ease, width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          willChange: "transform",
         }}
       >
         <div
-          className="border border-warm-white/40"
+          className="w-full h-full bg-warm-white"
           style={{
-            width: isHovering ? 48 : 24,
-            height: isHovering ? 48 : 24,
-            marginLeft: isHovering ? -24 : -12,
-            marginTop: isHovering ? -24 : -12,
+            mixBlendMode: "difference",
           }}
         />
+      </div>
+
+      {/* Outer ring — slight follow weight, no CSS transition */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        style={{
+          width: isHovering ? 48 : 24,
+          height: isHovering ? 48 : 24,
+          opacity: isVisible ? (isHovering ? 0.5 : 0.25) : 0,
+          willChange: "transform, width, height",
+          transition: "width 0.15s ease-out, height 0.15s ease-out, opacity 0.15s ease-out",
+        }}
+      >
+        <div className="w-full h-full border border-warm-white/40" />
       </div>
     </>
   );
