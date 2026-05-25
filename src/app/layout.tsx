@@ -7,6 +7,8 @@ import Toaster from "@/components/Toaster";
 import CustomCursor from "@/components/CustomCursor";
 import FilmGrain from "@/components/FilmGrain";
 import LoadingScreen from "@/components/LoadingScreen";
+import GenerativeSky from "@/components/GenerativeSky";
+import WindowFrame from "@/components/WindowFrame";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -42,6 +44,8 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-obsidian text-warm-white font-sans">
         <LoadingScreen />
+        <GenerativeSky />
+        <WindowFrame />
         <CustomCursor />
         <FilmGrain />
         <Providers>

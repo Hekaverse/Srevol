@@ -2,57 +2,22 @@
 
 import { useEffect, useState } from "react";
 
-const heroImages = [
-  "https://images.unsplash.com/photo-1518259102261-b40117eabbc9?w=1920&h=1080&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=1920&h=1080&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&h=1080&fit=crop&q=80",
-];
-
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
-  const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 2600); // after loading screen
+    const t = setTimeout(() => setMounted(true), 2800); // after loading screen + expand
     return () => clearTimeout(t);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [mounted]);
-
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-obsidian">
-      {/* Cinematic background — heavily treated */}
-      {heroImages.map((src, index) => (
-        <div
-          key={src}
-          className="absolute inset-0 transition-opacity duration-[3000ms] ease-expo"
-          style={{
-            opacity: currentImage === index && mounted ? 0.12 : 0,
-            zIndex: 1,
-          }}
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${src})`,
-              transform: "scale(1.1)",
-            }}
-          />
-        </div>
-      ))}
-
-      {/* Deep vignette */}
+    <section className="relative h-screen w-full overflow-hidden">
+      {/* Deep vignette over the generative sky */}
       <div
         className="absolute inset-0 z-[2]"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 80%, rgba(12,12,12,0.3) 0%, rgba(12,12,12,0.95) 70%)",
+            "radial-gradient(ellipse at 50% 80%, rgba(12,12,12,0.2) 0%, rgba(12,12,12,0.7) 70%)",
         }}
       />
 

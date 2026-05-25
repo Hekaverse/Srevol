@@ -20,12 +20,12 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "/packages", label: "Routes" },
-    { href: "/how-it-works", label: "Experience" },
+    { href: "/packages", label: "Destinations" },
+    { href: "/how-it-works", label: "Flight Plan" },
     ...(isAuthenticated
       ? [
           { href: "/dashboard", label: "Lounge" },
-          { href: "/trips", label: "Itinerary" },
+          { href: "/trips", label: "Manifest" },
         ]
       : []),
     ...(isAdmin ? [{ href: "/admin", label: "Flight Deck" }] : []),
@@ -46,7 +46,6 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12 flex items-center justify-between">
-          {/* Wordmark */}
           <Link
             href="/"
             className="font-serif text-lg tracking-[0.2em] uppercase text-warm-white hover:text-ember transition-colors duration-500"
@@ -54,16 +53,13 @@ export default function Navbar() {
             Srevol
           </Link>
 
-          {/* Desktop — minimal links */}
           <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`text-[11px] tracking-[0.15em] uppercase transition-colors duration-500 link-editorial ${
-                  isActive(link.href)
-                    ? "text-ember"
-                    : "text-warm-white/40"
+                  isActive(link.href) ? "text-ember" : "text-warm-white/40"
                 }`}
               >
                 {link.label}
@@ -74,19 +70,18 @@ export default function Navbar() {
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="text-[11px] tracking-[0.15em] uppercase text-warm-white/30 hover:text-warm-white transition-colors duration-500"
               >
-                Exit
+                Disembark
               </button>
             ) : (
               <Link
                 href="/login"
                 className="text-[11px] tracking-[0.15em] uppercase text-warm-white/30 hover:text-warm-white transition-colors duration-500"
               >
-                Enter
+                Board
               </Link>
             )}
           </div>
 
-          {/* Mobile menu toggle */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-[11px] tracking-[0.15em] uppercase text-warm-white/50"
@@ -96,7 +91,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Full-screen mobile menu */}
       <div
         className={`fixed inset-0 z-40 bg-obsidian transition-all duration-700 ease-expo flex flex-col items-center justify-center gap-8 ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
@@ -131,7 +125,7 @@ export default function Navbar() {
               transition: "opacity 0.5s ease, transform 0.5s ease",
             }}
           >
-            Exit
+            Disembark
           </button>
         ) : (
           <Link
@@ -145,7 +139,7 @@ export default function Navbar() {
               transition: "opacity 0.5s ease, transform 0.5s ease",
             }}
           >
-            Enter
+            Board
           </Link>
         )}
       </div>

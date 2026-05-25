@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import BarcodeSeparator from "./BarcodeSeparator";
 
 interface PackageTemplate {
   id: string;
@@ -67,61 +68,73 @@ export default function RouteIndex() {
 
   return (
     <section ref={sectionRef} className="bg-obsidian">
-      {/* Section header — minimal, left-aligned */}
-      <div className="max-w-[1400px] mx-auto px-8 lg:px-12 pt-32 pb-12">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12 pt-32 pb-8">
         <div
-          className={`transition-all duration-1000 ease-expo ${
+          className={`flex items-end justify-between transition-all duration-1000 ease-expo ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
-            The Network
-          </span>
-          <div className="mt-3 flex items-baseline gap-4">
-            <p className="font-serif text-lg text-warm-white/40">
-              {packages.length} routes
-            </p>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/10 font-mono">
-              {String(activeIndex + 1).padStart(2, "0")} /{" "}
-              {String(packages.length).padStart(2, "0")}
+          <div>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+              Route Map
             </span>
+            <div className="mt-3 flex items-baseline gap-4">
+              <p className="font-serif text-lg text-warm-white/40">
+                {packages.length} active routes
+              </p>
+              <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/10 font-mono">
+                {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(packages.length).padStart(2, "0")}
+              </span>
+            </div>
           </div>
+          <BarcodeSeparator />
         </div>
       </div>
 
-      {/* Horizontal cinematic gallery — massive panels */}
+      {/* Horizontal cinematic gallery */}
       <div
         ref={scrollRef}
         className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory"
         style={{ scrollBehavior: "smooth" }}
       >
-        {/* Left padding */}
         <div className="flex-shrink-0 w-8 lg:w-12" />
 
-        {packages.map((pkg) => (
+        {packages.map((pkg, index) => (
           <Link
             key={pkg.id}
             href={`/packages/${pkg.slug}`}
             className="group flex-shrink-0 snap-start"
             style={{ width: "clamp(320px, 85vw, 1100px)" }}
           >
-            <div className="relative mx-2 lg:mx-4" style={{ height: "clamp(380px, 55vh, 600px)" }}>
-              {/* Image — full color, cinematic */}
+            <div
+              className="relative mx-2 lg:mx-4"
+              style={{ height: "clamp(380px, 55vh, 600px)" }}
+            >
               <Image
-                src={pkg.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=800&fit=crop"}
+                src={
+                  pkg.image ||
+                  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=800&fit=crop"
+                }
                 alt={pkg.title}
                 fill
                 sizes="85vw"
                 className="object-cover transition-transform duration-[2.5s] ease-expo group-hover:scale-[1.03]"
               />
 
-              {/* Bottom gradient — heavier for text legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-obsidian/20 to-transparent" />
 
-              {/* Top-left: route code */}
+              {/* Top-left: route code + class */}
               <div className="absolute top-5 left-5 z-10">
                 <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/40 font-mono">
-                  {pkg.tier?.name || "Route"}
+                  {pkg.tier?.name || "Route"} Class
+                </span>
+              </div>
+
+              {/* Top-right: route code */}
+              <div className="absolute top-5 right-5 z-10">
+                <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/25 font-mono">
+                  SV-{String(index + 1).padStart(3, "0")}
                 </span>
               </div>
 
@@ -150,19 +163,24 @@ export default function RouteIndex() {
           </Link>
         ))}
 
-        {/* Right padding */}
         <div className="flex-shrink-0 w-8 lg:w-12" />
       </div>
 
       {/* Progress bar */}
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12 mt-10 pb-24">
-        <div className="h-px bg-warm-white/5 w-full">
-          <div
-            className="h-full bg-ember/30 transition-all duration-500 ease-expo"
-            style={{
-              width: packages.length > 0 ? `${((activeIndex + 1) / packages.length) * 100}%` : "0%",
-            }}
-          />
+        <div className="flex items-center gap-4">
+          <div className="h-px bg-warm-white/5 flex-1">
+            <div
+              className="h-full bg-ember/30 transition-all duration-500 ease-expo"
+              style={{
+                width:
+                  packages.length > 0
+                    ? `${((activeIndex + 1) / packages.length) * 100}%`
+                    : "0%",
+              }}
+            />
+          </div>
+          <BarcodeSeparator />
         </div>
       </div>
     </section>

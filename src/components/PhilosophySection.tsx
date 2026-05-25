@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import BarcodeSeparator from "./BarcodeSeparator";
 
 export default function PhilosophySection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,8 +34,18 @@ export default function PhilosophySection() {
             />
           </div>
           <div className="lg:col-span-9 lg:col-start-2">
+            <div
+              className={`transition-all duration-1000 ease-expo ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+            >
+              <span className="text-[10px] tracking-[0.3em] uppercase text-stone">
+                Mission Brief
+              </span>
+            </div>
+
             <p
-              className={`font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-obsidian leading-[1.15] tracking-tight transition-all duration-[1500ms] ease-expo ${
+              className={`mt-8 font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-obsidian leading-[1.15] tracking-tight transition-all duration-[1500ms] ease-expo ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
               }`}
               style={{ transitionDelay: "0.2s" }}
@@ -47,11 +58,20 @@ export default function PhilosophySection() {
               className={`mt-12 text-sm text-stone leading-relaxed max-w-md transition-all duration-1000 ease-expo ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
-              style={{ transitionDelay: "0.6s" }}
+              style={{ transitionDelay: "0.5s" }}
             >
               Every route is designed for two travelers who understand that the
               journey begins long before the cabin door closes.
             </p>
+
+            <div
+              className={`mt-16 transition-all duration-1000 ease-expo ${
+                isVisible ? "opacity-100" : "opacity-0"
+              }`}
+              style={{ transitionDelay: "0.7s" }}
+            >
+              <BarcodeSeparator />
+            </div>
           </div>
         </div>
       </div>

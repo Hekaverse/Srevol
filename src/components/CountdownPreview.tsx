@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import BarcodeSeparator from "./BarcodeSeparator";
 
 const phases = [
-  { label: "Flight Plan Filed", detail: "12+ months", desc: "Your reservation is secured. The route is locked. The anticipation begins." },
-  { label: "Cleared for Departure", detail: "6 months", desc: "Fare repricing is active. Your buffer protects you. Final itinerary details emerge." },
-  { label: "Boarding Preparation", detail: "3 months", desc: "Ground excursions confirmed. Layover suite selected. The departure board ticks closer." },
-  { label: "Final Approach", detail: "1 month", desc: "Travel documents prepared. Final confirmations sent. The cabin awaits." },
-  { label: "Wheels Up", detail: "Departure day", desc: "The departure you secured years ago becomes the moment you live together." },
+  { label: "Flight Plan Filed", detail: "T-12 months", desc: "Your reservation is secured. The route is locked. The anticipation begins." },
+  { label: "Cleared for Departure", detail: "T-6 months", desc: "Fare repricing is active. Your buffer protects you. Final itinerary details emerge." },
+  { label: "Boarding Preparation", detail: "T-3 months", desc: "Ground excursions confirmed. Layover suite selected. The departure board ticks closer." },
+  { label: "Final Approach", detail: "T-1 month", desc: "Travel documents prepared. Final confirmations sent. The cabin awaits." },
+  { label: "Wheels Up", detail: "T-0", desc: "The departure you secured years ago becomes the moment you live together." },
 ];
 
 export default function CountdownPreview() {
@@ -30,7 +31,6 @@ export default function CountdownPreview() {
 
         <div className="py-24 lg:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Left */}
             <div
               className={`lg:col-span-4 transition-all duration-1000 ease-expo ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
@@ -38,16 +38,18 @@ export default function CountdownPreview() {
             >
               <div className="hairline-v h-16 mb-6" />
               <span className="text-[10px] tracking-[0.3em] uppercase text-stone">
-                The Sequence
+                Departure Sequence
               </span>
               <h2 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl text-obsidian tracking-tight" style={{ lineHeight: 1.05 }}>
                 Every Phase
                 <br />
                 <span className="text-ember">Brings You Closer</span>
               </h2>
+              <div className="mt-8">
+                <BarcodeSeparator />
+              </div>
             </div>
 
-            {/* Right — phases */}
             <div className="lg:col-span-7 lg:col-start-6">
               {phases.map((phase, index) => (
                 <div
