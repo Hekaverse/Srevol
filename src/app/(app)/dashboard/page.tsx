@@ -1,33 +1,104 @@
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { NextRequest } from "next/server";
+import { headers, cookies } from "next/headers";
 import { getToken } from "next-auth/jwt";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import DashboardView from "./DashboardView";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  // Build a real NextRequest from incoming headers — same pattern as middleware.
-  // auth() from NextAuth v5 is unreliable in server components on Vercel.
-  const h = await headers();
-  const host = h.get("host") || "srevol.com";
-  const proto = h.get("x-forwarded-proto") || "https";
+  let userId: string | undefined;
+  let method = "";
+  let errorMsg = "";
 
-  const req = new NextRequest(`${proto}://${host}/dashboard`, { headers: h });
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  if (!token?.sub) {
-    redirect("/login");
+  // Method 1: auth() — same as /trips page (which works)
+  try {
+    const session = await auth();
+    if (session?.user?.id) {
+      userId = session.user.id;
+      method = "auth()";
+    }
+  } catch (e: any) {
+    errorMsg += `auth() failed: ${e.message}. `;
   }
 
+  // Method 2: getToken with headers cookie string
+  if (!userId) {
+    try {
+      const h = await headers();
+      const token = await getToken({
+        req: { headers: { cookie: h.get("cookie") || "" } } as any,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      if (token?.sub) {
+        userId = token.sub;
+        method = "getToken(headers)";
+      }
+    } catch (e: any) {
+      errorMsg += `getToken(headers) failed: ${e.message}. `;
+    }
+  }
+
+  // Method 3: getToken with cookies helper
+  if (!userId) {
+    try {
+      const c = await cookies();
+      const cookieHeader = c.getAll().map((ck) => `${ck.name}=${ck.value}`).join("; ");
+      const token = await getToken({
+        req: { headers: { cookie: cookieHeader } } as any,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      if (token?.sub) {
+        userId = token.sub;
+        method = "getToken(cookies)";
+      }
+    } catch (e: any) {
+      errorMsg += `getToken(cookies) failed: ${e.message}. `;
+    }
+  }
+
+  // If absolutely nothing works, show a diagnostic page instead of silently redirecting
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-obsidian pt-32 pb-24">
+        <div className="max-w-2xl mx-auto px-6 text-center">
+          <p className="text-ember font-serif text-2xl">Departure Lounge Unavailable</p>
+          <p className="text-warm-white/50 mt-4">
+            We couldn&apos;t verify your session on this page. Other pages work because they use a different auth path.
+          </p>
+          <div className="mt-8 p-6 bg-obsidian-light/30 rounded-xl border border-obsidian-muted/20 text-left">
+            <p className="text-xs text-warm-white/30 font-mono mb-2">DEBUG:</p>
+            <p className="text-xs text-warm-white/40 font-mono break-all">{errorMsg || "All methods returned null — no session token found."}</p>
+          </div>
+          <a
+            href="/login"
+            className="inline-block mt-8 px-8 py-3 text-sm font-medium text-obsidian bg-ember rounded-full hover:bg-ember-light transition-all"
+          >
+            Re-authenticate
+          </a>
+          <a
+            href="/trips"
+            className="inline-block mt-4 ml-4 px-8 py-3 text-sm font-medium text-warm-white border border-warm-white/20 rounded-full hover:border-warm-white/40 transition-all"
+          >
+            Try Manifest (works)
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Fetch dashboard data
   const user = await db.user.findUnique({
-    where: { id: token.sub },
+    where: { id: userId },
     select: { id: true, email: true, name: true, role: true },
   });
 
   if (!user) {
-    redirect("/login");
+    return (
+      <div className="min-h-screen bg-obsidian pt-32 pb-24 text-center">
+        <p className="text-warm-white/50">User not found in database (auth method: {method}).</p>
+      </div>
+    );
   }
 
   let couple = await db.couple.findFirst({
