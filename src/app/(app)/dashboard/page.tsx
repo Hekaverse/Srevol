@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
+import { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { db } from "@/lib/db";
 import DashboardView from "./DashboardView";
@@ -7,13 +8,14 @@ import DashboardView from "./DashboardView";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  // Use the same JWT verification as middleware — this is reliable on Vercel.
-  // auth() from NextAuth v5 server components is flaky in production.
-  const cookieStore = await cookies();
-  const token = await getToken({
-    req: { headers: { cookie: cookieStore.toString() } } as any,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Build a real NextRequest from incoming headers — same pattern as middleware.
+  // auth() from NextAuth v5 is unreliable in server components on Vercel.
+  const h = await headers();
+  const host = h.get("host") || "srevol.com";
+  const proto = h.get("x-forwarded-proto") || "https";
+
+  const req = new NextRequest(`${proto}://${host}/dashboard`, { headers: h });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!token?.sub) {
     redirect("/login");
@@ -38,7 +40,6 @@ export default async function DashboardPage() {
     },
   });
 
-  // Ensure referral code exists
   if (couple && !couple.referralCode) {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     let code = "SV";
