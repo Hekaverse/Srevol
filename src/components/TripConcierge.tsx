@@ -98,13 +98,13 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
       <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] font-mono tracking-[0.3em] text-amber/40 uppercase">
+            <p className="text-[10px] font-mono tracking-[0.3em] text-amber/65 uppercase">
               Trip Concierge
             </p>
             <h2 className="font-serif text-2xl font-bold text-warm-white mt-1">
               {data.destination}
             </h2>
-            <p className="text-sm text-warm-white/30 mt-1">
+            <p className="text-sm text-warm-white/55 mt-1">
               {formatDate(data.departureDate)} · {data.duration} days
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
               <p className="font-serif text-3xl font-bold text-ember">
                 {daysUntil}
               </p>
-              <p className="text-[9px] font-mono tracking-wider text-warm-white/20 uppercase">
+              <p className="text-[9px] font-mono tracking-wider text-warm-white/45 uppercase">
                 Days
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
               />
               <span
                 className={`text-[10px] font-mono tracking-wider uppercase ${
-                  m.completed ? "text-green-400/70" : "text-warm-white/20"
+                  m.completed ? "text-green-400/90" : "text-warm-white/45"
                 }`}
               >
                 {m.label}
@@ -181,7 +181,7 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
             className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 border ${
               activeDay === i
                 ? "bg-ember/10 text-ember border-ember/20"
-                : "bg-obsidian-light/20 text-warm-white/30 border-obsidian-muted/10 hover:border-warm-white/10"
+                : "bg-obsidian-light/40 text-warm-white/55 border-obsidian-muted/10 hover:border-warm-white/10"
             }`}
           >
             <span className="text-[10px] font-mono tracking-wider uppercase block">
@@ -200,7 +200,7 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
               {String(data.itinerary[activeDay].day).padStart(2, "0")}
             </span>
             <div className="h-px flex-1 bg-obsidian-muted/15" />
-            <span className="text-[10px] font-mono tracking-wider text-warm-white/20 uppercase">
+            <span className="text-[10px] font-mono tracking-wider text-warm-white/45 uppercase">
               {data.itinerary[activeDay].label}
             </span>
           </div>
@@ -218,16 +218,16 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono tracking-wider text-warm-white/30">
+                    <span className="text-[10px] font-mono tracking-wider text-warm-white/55">
                       {item.time}
                     </span>
                     {item.status === "confirmed" && (
-                      <span className="text-[9px] font-mono tracking-wider text-green-400/60 uppercase">
+                      <span className="text-[9px] font-mono tracking-wider text-green-400/85 uppercase">
                         Confirmed
                       </span>
                     )}
                     {item.status === "voucher" && (
-                      <span className="text-[9px] font-mono tracking-wider text-amber/60 uppercase">
+                      <span className="text-[9px] font-mono tracking-wider text-amber/85 uppercase">
                         Voucher Required
                       </span>
                     )}
@@ -235,12 +235,12 @@ export default function TripConcierge({ data }: { data: ConciergeData }) {
                   <p className="text-sm font-medium text-warm-white/80 mt-0.5">
                     {item.title}
                   </p>
-                  <p className="text-xs text-warm-white/25 mt-1 leading-relaxed">
+                  <p className="text-xs text-warm-white/50 mt-1 leading-relaxed">
                     {item.description}
                   </p>
                   {item.voucherCode && (
                     <div className="mt-2 p-2 bg-obsidian/40 rounded-lg border border-amber/5 inline-flex items-center gap-2">
-                      <span className="text-[9px] font-mono tracking-wider text-warm-white/20 uppercase">
+                      <span className="text-[9px] font-mono tracking-wider text-warm-white/45 uppercase">
                         Voucher
                       </span>
                       <span className="text-xs font-mono text-amber/70 tracking-wider">

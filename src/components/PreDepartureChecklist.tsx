@@ -68,12 +68,12 @@ export default function PreDepartureChecklist({ daysUntil }: { daysUntil: number
   }, {} as Record<string, ChecklistItem[]>);
 
   return (
-    <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
+    <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-serif text-lg font-bold text-warm-white tracking-luxury">
           Pre-Departure Manifest
         </h3>
-        <span className="text-[10px] font-mono tracking-wider text-amber/50 uppercase">
+        <span className="text-[10px] font-mono tracking-wider text-amber/75 uppercase">
           {progress}% Complete
         </span>
       </div>
@@ -126,7 +126,7 @@ export default function PreDepartureChecklist({ daysUntil }: { daysUntil: number
                       </div>
                       <span
                         className={`text-sm transition-all duration-300 ${
-                          isChecked ? "text-warm-white/30 line-through" : "text-warm-white/60"
+                          isChecked ? "text-warm-white/50 line-through" : "text-warm-white/85"
                         }`}
                       >
                         {item.label}
@@ -141,7 +141,7 @@ export default function PreDepartureChecklist({ daysUntil }: { daysUntil: number
       </div>
 
       {visibleItems.length === 0 && (
-        <p className="text-sm text-warm-white/20 text-center py-6">
+        <p className="text-sm text-warm-white/45 text-center py-6">
           Your pre-departure manifest will unlock as your departure approaches.
         </p>
       )}

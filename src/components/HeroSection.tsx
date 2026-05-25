@@ -45,7 +45,7 @@ export default function HeroSection() {
         style={{ transitionDelay: "0.8s" }}
       >
         <span
-          className="text-[10px] tracking-[0.3em] uppercase text-warm-white/25"
+          className="text-[10px] tracking-[0.3em] uppercase text-warm-white/50"
           style={{ writingMode: "vertical-rl" }}
         >
           The Private Carrier for Two
@@ -59,7 +59,7 @@ export default function HeroSection() {
         }`}
         style={{ transitionDelay: "0.5s" }}
       >
-        <span className="text-[9px] tracking-[0.3em] uppercase text-warm-white/15 font-mono">
+        <span className="text-[9px] tracking-[0.3em] uppercase text-warm-white/40 font-mono">
           EST. 2026
         </span>
       </div>

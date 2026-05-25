@@ -127,7 +127,7 @@ export default function RegisterPage() {
             onChange={(e) => setPartnerEmail(e.target.value)}
             autoComplete="off"
           />
-          <p className="text-xs text-warm-white/15 -mt-3 ml-1">
+          <p className="text-xs text-warm-white/40 -mt-3 ml-1">
             Optional — invite them later from your departure lounge.
           </p>
 
@@ -140,7 +140,7 @@ export default function RegisterPage() {
             required
             autoComplete="new-password"
           />
-          <p className="text-xs text-warm-white/15 -mt-3 ml-1">
+          <p className="text-xs text-warm-white/40 -mt-3 ml-1">
             Min 8 chars, with uppercase, lowercase, and number.
           </p>
 
@@ -154,7 +154,7 @@ export default function RegisterPage() {
         </form>
 
         <div className="mt-8 text-center">
-          <p className="text-sm text-warm-white/25">
+          <p className="text-sm text-warm-white/50">
             Already have a profile?{" "}
             <Link href="/login" className="text-ember/70 hover:text-ember transition-colors duration-300 link-underline">
               Sign in

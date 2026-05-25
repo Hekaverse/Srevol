@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
     <div className="min-h-screen bg-obsidian">
       {/* Hero */}
       <section className="pt-40 pb-24 max-w-[1400px] mx-auto px-8 lg:px-12">
-        <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/30">
+        <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/50">
           The Experience
         </span>
         <h1
@@ -63,7 +63,7 @@ export default function HowItWorksPage() {
           <br />
           <span className="text-ember">Works</span>
         </h1>
-        <p className="mt-6 text-sm text-warm-white/25 max-w-md leading-relaxed">
+        <p className="mt-6 text-sm text-warm-white/50 max-w-md leading-relaxed">
           From first dream to final boarding pass, every step is designed around
           the two of you.
         </p>
@@ -80,7 +80,7 @@ export default function HowItWorksPage() {
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                 <div className="lg:col-span-2">
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/15 font-mono">
+                  <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/35 font-mono">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
@@ -90,10 +90,10 @@ export default function HowItWorksPage() {
                   </h3>
                 </div>
                 <div className="lg:col-span-5">
-                  <p className="text-sm text-warm-white/30 leading-relaxed">
+                  <p className="text-sm text-warm-white/55 leading-relaxed">
                     {item.desc}
                   </p>
-                  <p className="mt-3 text-[11px] tracking-[0.1em] uppercase text-ember/50">
+                  <p className="mt-3 text-[11px] tracking-[0.1em] uppercase text-ember/75">
                     {item.detail}
                   </p>
                 </div>

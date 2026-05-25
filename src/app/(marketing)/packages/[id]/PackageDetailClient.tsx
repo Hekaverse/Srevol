@@ -169,7 +169,7 @@ export default function PackageDetailClient({
             <div className="lg:col-span-8 space-y-16">
               {/* Description */}
               <div>
-                <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/45">
                   About This Route
                 </span>
                 <p className="mt-4 text-warm-white/40 leading-relaxed text-lg">
@@ -180,7 +180,7 @@ export default function PackageDetailClient({
               {/* Gallery — no rounded corners */}
               {template.gallery.length > 0 && (
                 <div>
-                  <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/45">
                     Gallery
                   </span>
                   <div className="mt-4 grid grid-cols-2 gap-2">
@@ -238,13 +238,13 @@ export default function PackageDetailClient({
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24 space-y-8">
                 <div className="border border-warm-white/5 p-8">
-                  <p className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+                  <p className="text-[10px] tracking-[0.3em] uppercase text-warm-white/45">
                     Fare from
                   </p>
                   <p className="mt-2 font-serif text-4xl font-light text-warm-white">
                     {formatPrice(data?.priceBreakdown?.total || template.basePrice)}
                   </p>
-                  <p className="mt-1 text-xs text-warm-white/20 tracking-luxury">
+                  <p className="mt-1 text-xs text-warm-white/45 tracking-luxury">
                     cabin for 2 · {template.duration} days
                   </p>
 
@@ -259,7 +259,7 @@ export default function PackageDetailClient({
                 </div>
 
                 <div className="border border-warm-white/5 p-6">
-                  <p className="text-xs text-warm-white/15 leading-relaxed">
+                  <p className="text-xs text-warm-white/40 leading-relaxed">
                     Fares are live estimates. Final fare confirmed at booking.
                     All reservations include flexible rebooking and secure fund
                     protection.

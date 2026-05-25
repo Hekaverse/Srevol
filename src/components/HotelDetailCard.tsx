@@ -92,7 +92,7 @@ export default function HotelDetailCard({
               {hotel.name}
             </h3>
             {hotel.reviewCount && (
-              <p className="text-xs text-warm-white/25 mt-1">
+              <p className="text-xs text-warm-white/50 mt-1">
                 {hotel.reviewCount} verified reviews
               </p>
             )}
@@ -101,7 +101,7 @@ export default function HotelDetailCard({
             <p className="text-lg font-bold text-amber">
               {formatPrice(hotel.basePrice)}
             </p>
-            <p className="text-[10px] text-warm-white/20 tracking-wider uppercase">
+            <p className="text-[10px] text-warm-white/45 tracking-wider uppercase">
               per night
             </p>
           </div>
@@ -135,7 +135,7 @@ export default function HotelDetailCard({
         {/* Amenities */}
         {hotel.amenities.length > 0 && (
           <div className="mt-5">
-            <p className="text-[10px] font-mono tracking-[0.2em] text-warm-white/15 uppercase mb-3">
+            <p className="text-[10px] font-mono tracking-[0.2em] text-warm-white/40 uppercase mb-3">
               Amenities
             </p>
             <div className="flex flex-wrap gap-2">
@@ -152,7 +152,7 @@ export default function HotelDetailCard({
         )}
 
         <div className="mt-5 pt-5 border-t border-obsidian-muted/15">
-          <p className="text-xs text-warm-white/20">
+          <p className="text-xs text-warm-white/45">
             Total accommodation: {formatPrice(hotel.basePrice * duration)} for{" "}
             {duration} nights
           </p>

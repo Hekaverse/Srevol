@@ -77,7 +77,7 @@ export default async function TripsPage() {
                 <h1 className="mt-4 font-serif text-4xl sm:text-5xl font-bold text-warm-white tracking-tight">
                   My Itinerary
                 </h1>
-                <p className="mt-3 text-warm-white/30">
+                <p className="mt-3 text-warm-white/55">
                   {activeTrips.length} active{" "}
                   {activeTrips.length === 1 ? "departure" : "departures"} ·{" "}
                   {formatPrice(totalPaid)} secured
@@ -94,10 +94,10 @@ export default async function TripsPage() {
 
           {bookings.length === 0 ? (
             <ScrollReveal animation="fade-up" delay={0.1}>
-              <div className="text-center py-24 bg-obsidian-light/20 rounded-3xl border border-obsidian-muted/20">
+              <div className="text-center py-24 bg-obsidian-light/50 rounded-3xl border border-obsidian-muted/20">
                 <div className="w-16 h-16 rounded-full bg-obsidian-muted/30 flex items-center justify-center mx-auto mb-6">
                   <svg
-                    className="w-7 h-7 text-warm-white/30"
+                    className="w-7 h-7 text-warm-white/55"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -113,7 +113,7 @@ export default async function TripsPage() {
                 <h3 className="font-serif text-xl font-bold text-warm-white">
                   No departures yet
                 </h3>
-                <p className="mt-2 text-sm text-warm-white/30 max-w-sm mx-auto">
+                <p className="mt-2 text-sm text-warm-white/55 max-w-sm mx-auto">
                   Your departure begins with a single route. Browse our
                   curated departures and start planning.
                 </p>
@@ -151,7 +151,7 @@ export default async function TripsPage() {
                   >
                     <Link
                       href={`/trips/${booking.id}`}
-                      className="group block bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8 hover:border-ember/15 transition-all duration-500"
+                      className="group block bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8 hover:border-ember/15 transition-all duration-500"
                     >
                       <div className="flex flex-col sm:flex-row gap-6">
                         {/* Image */}
@@ -165,7 +165,7 @@ export default async function TripsPage() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-2xl font-serif text-warm-white/10">
+                              <span className="text-2xl font-serif text-warm-white/25">
                                 S
                               </span>
                             </div>
@@ -184,7 +184,7 @@ export default async function TripsPage() {
                               <h3 className="mt-3 font-serif text-xl font-bold text-warm-white group-hover:text-ember transition-colors duration-500">
                                 {pkg?.title || "Unknown Departure"}
                               </h3>
-                              <p className="mt-1 text-sm text-warm-white/30">
+                              <p className="mt-1 text-sm text-warm-white/55">
                                 {pkg?.destination} · {pkg?.duration} days
                               </p>
                             </div>
@@ -192,7 +192,7 @@ export default async function TripsPage() {
                               <p className="font-serif text-lg font-bold text-warm-white">
                                 {formatPrice(booking.totalPrice)}
                               </p>
-                              <p className="text-xs text-warm-white/20">
+                              <p className="text-xs text-warm-white/45">
                                 for 2
                               </p>
                             </div>
@@ -202,7 +202,7 @@ export default async function TripsPage() {
                           {booking.paymentPlan && (
                             <div className="mt-5">
                               <div className="flex items-center justify-between text-xs mb-2">
-                                <span className="text-warm-white/25">
+                                <span className="text-warm-white/50">
                                   Fare Lock Progress
                                 </span>
                                 <span className="text-ember font-medium">
@@ -215,7 +215,7 @@ export default async function TripsPage() {
                                   style={{ width: `${progress}%` }}
                                 />
                               </div>
-                              <p className="text-[11px] text-warm-white/20 mt-2">
+                              <p className="text-[11px] text-warm-white/45 mt-2">
                                 {booking.paymentPlan.payments.filter(
                                   (p) => p.status === "COMPLETED"
                                 ).length}{" "}

@@ -75,14 +75,14 @@ export default function RouteIndex() {
           }`}
         >
           <div>
-            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/45">
               Route Map
             </span>
             <div className="mt-3 flex items-baseline gap-4">
               <p className="font-serif text-lg text-warm-white/40">
                 {packages.length} active routes
               </p>
-              <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/10 font-mono">
+              <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/30 font-mono">
                 {String(activeIndex + 1).padStart(2, "0")} /{" "}
                 {String(packages.length).padStart(2, "0")}
               </span>
@@ -133,7 +133,7 @@ export default function RouteIndex() {
 
               {/* Top-right: route code */}
               <div className="absolute top-5 right-5 z-10">
-                <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/25 font-mono">
+                <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/50 font-mono">
                   SV-{String(index + 1).padStart(3, "0")}
                 </span>
               </div>
@@ -153,7 +153,7 @@ export default function RouteIndex() {
                     <p className="text-xl lg:text-2xl text-warm-white/70 font-serif">
                       {formatPrice(pkg.basePrice)}
                     </p>
-                    <p className="text-[9px] tracking-[0.15em] uppercase text-warm-white/20">
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-warm-white/45">
                       {pkg.duration} days · cabin for 2
                     </p>
                   </div>

@@ -31,7 +31,7 @@ export default function CTASection() {
           </div>
           <div className="lg:col-span-8 lg:col-start-3">
             <span
-              className={`text-[10px] tracking-[0.3em] uppercase text-warm-white/15 transition-all duration-1000 ease-expo ${
+              className={`text-[10px] tracking-[0.3em] uppercase text-warm-white/40 transition-all duration-1000 ease-expo ${
                 isVisible ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -50,7 +50,7 @@ export default function CTASection() {
             </h2>
 
             <p
-              className={`mt-10 text-lg text-warm-white/25 max-w-lg leading-relaxed font-light italic transition-all duration-1000 ease-expo ${
+              className={`mt-10 text-lg text-warm-white/50 max-w-lg leading-relaxed font-light italic transition-all duration-1000 ease-expo ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
               style={{ transitionDelay: "0.4s" }}
@@ -92,7 +92,7 @@ export default function CTASection() {
                   (item) => (
                     <span
                       key={item}
-                      className="text-[10px] tracking-[0.15em] uppercase text-warm-white/10"
+                      className="text-[10px] tracking-[0.15em] uppercase text-warm-white/30"
                     >
                       {item}
                     </span>

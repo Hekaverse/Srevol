@@ -57,7 +57,7 @@ export default function ExperienceMarketplace({
         <h3 className="font-serif text-lg font-bold text-warm-white tracking-luxury">
           Experience Marketplace
         </h3>
-        <span className="text-[10px] font-mono tracking-wider text-warm-white/20 uppercase">
+        <span className="text-[10px] font-mono tracking-wider text-warm-white/45 uppercase">
           {experiences.length} Available
         </span>
       </div>
@@ -91,7 +91,7 @@ export default function ExperienceMarketplace({
                   {exp.name}
                 </h4>
                 {exp.description && (
-                  <p className="text-xs text-warm-white/25 mt-1.5 leading-relaxed line-clamp-2">
+                  <p className="text-xs text-warm-white/50 mt-1.5 leading-relaxed line-clamp-2">
                     {exp.description}
                   </p>
                 )}
@@ -100,7 +100,7 @@ export default function ExperienceMarketplace({
                     {formatPrice(exp.price)}
                   </span>
                   {exp.isOptional && (
-                    <span className="text-[9px] font-mono tracking-wider text-warm-white/15 uppercase">
+                    <span className="text-[9px] font-mono tracking-wider text-warm-white/40 uppercase">
                       Add-on
                     </span>
                   )}

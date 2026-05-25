@@ -39,7 +39,7 @@ export default async function TiersPage() {
               <br />
               <span className="text-ember">Take Flight?</span>
             </h1>
-            <p className="mt-6 text-lg text-warm-white/30 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-6 text-lg text-warm-white/55 max-w-2xl mx-auto leading-relaxed">
               Every cabin is a promise. Select the service class that matches your dream,
               and we&apos;ll secure the route back to today — one contribution at a time.
             </p>
@@ -62,7 +62,7 @@ export default async function TiersPage() {
                   delay={index * 0.1}
                 >
                   <TiltCard
-                    className="group relative bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 hover:border-ember/15 transition-all duration-500 flex flex-col h-full"
+                    className="group relative bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 hover:border-ember/15 transition-all duration-500 flex flex-col h-full"
                     maxTilt={4}
                     glareOpacity={0.04}
                   >
@@ -74,7 +74,7 @@ export default async function TiersPage() {
                       {tier.name}
                     </h3>
 
-                    <p className="mt-4 text-sm text-warm-white/30 leading-relaxed flex-1">
+                    <p className="mt-4 text-sm text-warm-white/55 leading-relaxed flex-1">
                       {tier.description}
                     </p>
 
@@ -82,7 +82,7 @@ export default async function TiersPage() {
                       {destinations.slice(0, 3).map((d) => (
                         <span
                           key={d}
-                          className="text-[10px] px-2.5 py-1 rounded-full bg-obsidian-muted/15 text-warm-white/25 tracking-wider uppercase border border-obsidian-muted/15"
+                          className="text-[10px] px-2.5 py-1 rounded-full bg-obsidian-muted/15 text-warm-white/50 tracking-wider uppercase border border-obsidian-muted/15"
                         >
                           {d}
                         </span>
@@ -90,12 +90,12 @@ export default async function TiersPage() {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-obsidian-muted/15">
-                      <p className="text-[10px] text-warm-white/20 tracking-wide-luxury uppercase">
+                      <p className="text-[10px] text-warm-white/45 tracking-wide-luxury uppercase">
                         Base estimate
                       </p>
                       <p className="font-serif text-2xl font-bold text-warm-white mt-1">
                         {formatPrice(tier.minPrice)}
-                        <span className="text-sm font-normal text-warm-white/25">
+                        <span className="text-sm font-normal text-warm-white/50">
                           {" "}
                           — {formatPrice(tier.maxPrice)}
                         </span>
@@ -112,19 +112,19 @@ export default async function TiersPage() {
                           </svg>
                           Fare Lock Guarantee
                         </p>
-                        <p className="text-xs text-warm-white/25 mt-2">
+                        <p className="text-xs text-warm-white/50 mt-2">
                           Reservation target:{" "}
                           <span className="text-warm-white/40">
                             {formatPrice(protectedMax)}
                           </span>
                         </p>
-                        <p className="text-[10px] text-warm-white/15 mt-1">
+                        <p className="text-[10px] text-warm-white/40 mt-1">
                           Includes {Math.round((tier.inflationBuffer || 0.15) * 100)}%
                           buffer
                         </p>
                       </div>
 
-                      <p className="text-[11px] text-warm-white/20 mt-4 tracking-luxury">
+                      <p className="text-[11px] text-warm-white/45 mt-4 tracking-luxury">
                         From {formatPrice(monthly)}/mo &middot;{" "}
                         {tier.defaultMonths} months
                       </p>
@@ -147,7 +147,7 @@ export default async function TiersPage() {
 
           {/* Fare Lock Info */}
           <ScrollReveal animation="fade-up" delay={0.3} className="mt-20">
-            <div className="relative p-8 sm:p-10 bg-obsidian-light/15 rounded-3xl border border-obsidian-muted/15 overflow-hidden">
+            <div className="relative p-8 sm:p-10 bg-obsidian-light/40 rounded-3xl border border-obsidian-muted/15 overflow-hidden">
               <div
                 className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20"
                 style={{
@@ -184,7 +184,7 @@ export default async function TiersPage() {
                     <p className="text-sm font-medium text-warm-white/60">
                       {i + 1}. {step.title}
                     </p>
-                    <p className="text-xs text-warm-white/25 mt-2 leading-relaxed">
+                    <p className="text-xs text-warm-white/50 mt-2 leading-relaxed">
                       {step.desc}
                     </p>
                   </div>
@@ -194,7 +194,7 @@ export default async function TiersPage() {
           </ScrollReveal>
 
           <ScrollReveal animation="fade-up" delay={0.4} className="mt-16 text-center">
-            <p className="text-sm text-warm-white/15 italic">
+            <p className="text-sm text-warm-white/40 italic">
               &ldquo;Every great departure begins long before boarding.&rdquo;
             </p>
           </ScrollReveal>

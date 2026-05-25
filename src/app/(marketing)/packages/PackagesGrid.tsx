@@ -45,7 +45,7 @@ export default function PackagesGrid({
     <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
       {/* Header */}
       <div className="pt-20 pb-16">
-        <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/30">
+        <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/55">
           The Network
         </span>
         <h1
@@ -56,7 +56,7 @@ export default function PackagesGrid({
           <br />
           <span className="text-ember">Routes</span>
         </h1>
-        <p className="mt-6 text-sm text-warm-white/25 max-w-md leading-relaxed">
+        <p className="mt-6 text-sm text-warm-white/50 max-w-md leading-relaxed">
           Every route is chosen for two. Browse, dream, and secure your departure.
         </p>
       </div>
@@ -70,7 +70,7 @@ export default function PackagesGrid({
             className={`px-4 py-2 text-[11px] tracking-[0.1em] uppercase transition-all duration-500 ease-expo ${
               activeFilter === filter
                 ? "text-ember"
-                : "text-warm-white/25 hover:text-warm-white/50"
+                : "text-warm-white/50 hover:text-warm-white/75"
             }`}
           >
             {filter}
@@ -99,11 +99,11 @@ export default function PackagesGrid({
               <div className="flex items-center justify-between gap-4">
                 {/* Left — index + tier */}
                 <div className="hidden lg:flex items-center gap-6 w-40 flex-shrink-0">
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/20 font-mono">
+                  <span className="text-[10px] tracking-[0.2em] uppercase text-warm-white/45 font-mono">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   {pkg.tier && (
-                    <span className="text-[9px] tracking-[0.2em] uppercase text-warm-white/15">
+                    <span className="text-[9px] tracking-[0.2em] uppercase text-warm-white/40">
                       {pkg.tier.name}
                     </span>
                   )}
@@ -121,7 +121,7 @@ export default function PackagesGrid({
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-warm-white/20 group-hover:text-warm-white/30 transition-colors duration-500">
+                  <p className="mt-1 text-xs text-warm-white/45 group-hover:text-warm-white/60 transition-colors duration-500">
                     {pkg.subtitle}
                   </p>
                 </div>
@@ -132,7 +132,7 @@ export default function PackagesGrid({
                     <p className="text-sm text-warm-white/60 font-serif">
                       {formatPrice(pkg.basePrice)}
                     </p>
-                    <p className="text-[9px] tracking-[0.15em] uppercase text-warm-white/15">
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-warm-white/40">
                       Cabin for 2
                     </p>
                   </div>
@@ -156,7 +156,7 @@ export default function PackagesGrid({
 
       {filtered.length === 0 && (
         <div className="py-20 text-center">
-          <p className="text-warm-white/30 text-sm tracking-luxury">
+          <p className="text-warm-white/55 text-sm tracking-luxury">
             No routes match this filter.
           </p>
           <button

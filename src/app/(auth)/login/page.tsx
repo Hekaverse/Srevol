@@ -116,12 +116,12 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 text-center space-y-3">
-          <p className="text-sm text-warm-white/25">
+          <p className="text-sm text-warm-white/50">
             <Link href="/forgot-password" className="text-ember/70 hover:text-ember transition-colors duration-300 link-underline">
               Forgot your password?
             </Link>
           </p>
-          <p className="text-sm text-warm-white/25">
+          <p className="text-sm text-warm-white/50">
             Don&apos;t have a profile?{" "}
             <Link href="/register" className="text-ember/70 hover:text-ember transition-colors duration-300 link-underline">
               Register your party

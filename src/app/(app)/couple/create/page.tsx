@@ -142,7 +142,7 @@ export default function CreateCouplePage() {
                   placeholder="e.g., Alex & Jordan"
                   autoComplete="off"
                 />
-                <p className="text-xs text-warm-white/15 -mt-4 ml-1">
+                <p className="text-xs text-warm-white/40 -mt-4 ml-1">
                   Optional — defaults to your name & Partner.
                 </p>
 
@@ -154,7 +154,7 @@ export default function CreateCouplePage() {
                   onChange={(e) => setPartnerEmail(e.target.value)}
                   autoComplete="off"
                 />
-                <p className="text-xs text-warm-white/15 -mt-4 ml-1">
+                <p className="text-xs text-warm-white/40 -mt-4 ml-1">
                   Optional — you can invite them later from your departure lounge.
                 </p>
 
@@ -193,7 +193,7 @@ export default function CreateCouplePage() {
               </form>
 
               <div className="mt-6 pt-6 border-t border-obsidian-muted/15">
-                <p className="text-xs text-warm-white/20 text-center leading-relaxed">
+                <p className="text-xs text-warm-white/45 text-center leading-relaxed">
                   By registering your traveling party, you and your co-traveler can share reservation funds,
                   departure boards, and itinerary details.
                 </p>

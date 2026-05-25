@@ -66,14 +66,14 @@ function StatCard({
 }) {
   return (
     <ScrollReveal animation="fade-up" delay={delay} className="group">
-      <div className="relative bg-obsidian-light/30 backdrop-blur-sm rounded-2xl border border-obsidian-muted/20 p-6 transition-all duration-500 ease-expo hover:border-ember/10 hover:bg-obsidian-light/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20">
-        <p className="text-xs text-warm-white/30 tracking-wide-luxury uppercase">
+      <div className="relative bg-obsidian-light/50 backdrop-blur-sm rounded-2xl border border-obsidian-muted/20 p-6 transition-all duration-500 ease-expo hover:border-ember/10 hover:bg-obsidian-light/60 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20">
+        <p className="text-xs text-warm-white/50 tracking-wide-luxury uppercase">
           {label}
         </p>
         <p className="text-2xl sm:text-3xl font-bold text-warm-white mt-2 font-serif">
           {value}
         </p>
-        <p className="text-xs text-warm-white/20 mt-2 tracking-luxury">
+        <p className="text-xs text-warm-white/45 mt-2 tracking-luxury">
           {subtext}
         </p>
         <div
@@ -102,7 +102,7 @@ function ProgressBar({
     <div>
       {label && (
         <div className="flex items-center justify-between text-sm mb-3">
-          <span className="text-warm-white/30 tracking-luxury">{label}</span>
+          <span className="text-warm-white/55 tracking-luxury">{label}</span>
           <span className="font-semibold text-ember font-serif">{pct}%</span>
         </div>
       )}
@@ -116,10 +116,10 @@ function ProgressBar({
         </div>
       </div>
       <div className="flex items-center justify-between mt-2">
-        <p className="text-[11px] text-warm-white/20 tracking-luxury">
+        <p className="text-[11px] text-warm-white/45 tracking-luxury">
           Secured: {formatPrice(saved)}
         </p>
-        <p className="text-[11px] text-ember/40 tracking-luxury">
+        <p className="text-[11px] text-ember/60 tracking-luxury">
           Target: {formatPrice(target)}
         </p>
       </div>
@@ -155,10 +155,10 @@ function TimelineItem({
         <p
           className={`text-sm transition-colors duration-300 ${
             isPaid
-              ? "text-warm-white/50"
+              ? "text-warm-white/60"
               : isCurrent
-                ? "text-warm-white/70"
-                : "text-warm-white/20"
+                ? "text-warm-white/85"
+                : "text-warm-white/40"
           }`}
         >
           Cycle {month}
@@ -169,8 +169,8 @@ function TimelineItem({
           isPaid
             ? "text-warm-white/50"
             : isCurrent
-              ? "text-warm-white/70"
-              : "text-warm-white/20"
+              ? "text-warm-white/85"
+              : "text-warm-white/40"
         }`}
       >
         {amount}
@@ -181,7 +181,7 @@ function TimelineItem({
             ? "bg-green-500/8 text-green-400/70"
             : isCurrent
               ? "bg-ember/10 text-ember/70"
-              : "bg-obsidian-muted/30 text-warm-white/15"
+              : "bg-obsidian-muted/30 text-warm-white/40"
         }`}
       >
         {isPaid ? "Contributed" : isCurrent ? "Current" : "Upcoming"}
@@ -191,7 +191,7 @@ function TimelineItem({
 }
 
 function getStatusMessage(bucket: Bucket | undefined) {
-  if (!bucket) return { text: "No active reservation", color: "text-warm-white/30" };
+  if (!bucket) return { text: "No active reservation", color: "text-warm-white/50" };
   const progress = Math.round(
     (bucket.savedAmount / (bucket.protectedTarget || bucket.targetAmount)) * 100
   );
@@ -204,7 +204,7 @@ function getStatusMessage(bucket: Bucket | undefined) {
     return { text: "Repricing Available", color: "text-amber-400/80" };
   if (bucket.status === "BOOKED")
     return { text: "Booked", color: "text-green-400/80" };
-  return { text: bucket.status, color: "text-warm-white/30" };
+  return { text: bucket.status, color: "text-warm-white/50" };
 }
 
 export default function DashboardView({
@@ -223,18 +223,36 @@ export default function DashboardView({
     user.name?.split(" ")[0] || user.email?.split("@")[0] || "Traveler";
 
   return (
-    <div className="min-h-screen bg-obsidian">
-      <main className="pt-32 pb-24">
+    <div className="min-h-screen bg-obsidian relative">
+      {/* Lounge ambient glow */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none opacity-30"
+        style={{
+          background: "radial-gradient(ellipse at 50% 0%, rgba(199,107,74,0.06) 0%, transparent 60%)",
+        }}
+      />
+      <main className="pt-32 pb-24 relative">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           {/* Header */}
           <ScrollReveal animation="fade-up" className="mb-14">
+            {/* Lounge gate indicator */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex items-center gap-2 px-3 py-1.5 border border-ember/15 rounded-sm">
+                <span className="text-[9px] font-mono tracking-[0.25em] text-ember/60 uppercase">Gate</span>
+                <span className="text-[10px] font-mono tracking-wider text-ember font-bold">SV-Lounge</span>
+              </div>
+              <div className="h-px flex-1 bg-obsidian-muted/20" />
+              <span className="text-[9px] font-mono tracking-[0.2em] text-warm-white/30 uppercase">
+                Departure Lounge
+              </span>
+            </div>
             <div className="flex items-baseline gap-3">
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-warm-white tracking-tight">
                 Welcome aboard, {firstName}
               </h1>
               <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-ember/60 animate-pulse" />
             </div>
-            <p className="mt-3 text-warm-white/30 text-lg max-w-xl leading-relaxed">
+            <p className="mt-3 text-warm-white/55 text-lg max-w-xl leading-relaxed">
               {activeBucket
                 ? `Your ${activeBucket.tier.name} reservation is ${Math.round((activeBucket.savedAmount / (activeBucket.protectedTarget || activeBucket.targetAmount)) * 100)}% secured.`
                 : couple
@@ -324,7 +342,7 @@ export default function DashboardView({
           {/* Empty State */}
           {buckets.length === 0 && (
             <ScrollReveal animation="scale-in" className="mb-14">
-              <div className="relative p-12 bg-obsidian-light/20 rounded-3xl border border-obsidian-muted/20 text-center overflow-hidden">
+              <div className="relative p-12 bg-obsidian-light/50 rounded-3xl border border-obsidian-muted/20 text-center overflow-hidden">
                 <div
                   className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20"
                   style={{
@@ -332,12 +350,12 @@ export default function DashboardView({
                       "radial-gradient(circle, rgba(212,165,116,0.1) 0%, transparent 70%)",
                   }}
                 />
-                <p className="text-xl text-warm-white/50 font-serif">
+                <p className="text-xl text-warm-white/70 font-serif">
                   {couple
                     ? "You haven't secured a reservation yet."
                     : "Welcome! Let's set up your traveling party."}
                 </p>
-                <p className="mt-3 text-sm text-warm-white/25 max-w-md mx-auto leading-relaxed">
+                <p className="mt-3 text-sm text-warm-white/50 max-w-md mx-auto leading-relaxed">
                   {couple
                     ? "Select a cabin class and begin your countdown to the perfect departure."
                     : "Start by selecting a cabin class or inviting your co-traveler."}
@@ -359,7 +377,7 @@ export default function DashboardView({
                 <>
                   {/* Active Journey Card */}
                   <ScrollReveal animation="fade-up" delay={0.1}>
-                    <div className="relative bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 overflow-hidden group transition-all duration-500 hover:border-ember/10">
+                    <div className="relative bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 overflow-hidden group transition-all duration-500 hover:border-ember/10">
                       <div className="relative h-56">
                         <Image
                           src="https://images.unsplash.com/photo-1613395877344-13d4c79e4284?w=1200&h=400&fit=crop"
@@ -376,7 +394,7 @@ export default function DashboardView({
                           <h3 className="font-serif text-2xl font-bold text-warm-white mt-3">
                             Your {activeBucket.tier.name} Departure
                           </h3>
-                          <p className="text-sm text-warm-white/40 mt-1">
+                          <p className="text-sm text-warm-white/65 mt-1">
                             {formatPrice(activeBucket.savedAmount)} secured
                             {activeBucket.repricedAt &&
                               ` · Repriced ${activeBucket.repricedAt.toLocaleDateString()}`}
@@ -415,7 +433,7 @@ export default function DashboardView({
                               <p className="text-sm font-medium text-warm-white/80">
                                 Fare Lock Guarantee Active
                               </p>
-                              <p className="text-xs text-warm-white/30 mt-1.5 leading-relaxed">
+                              <p className="text-xs text-warm-white/55 mt-1.5 leading-relaxed">
                                 {Math.round(
                                   (activeBucket.inflationBufferApplied || 0.15) * 100
                                 )}
@@ -451,7 +469,7 @@ export default function DashboardView({
                           </Link>
                           <Link
                             href="/demo/addons"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm text-warm-white/50 bg-warm-white/5 rounded-full hover:bg-warm-white/10 transition-all duration-300 border border-warm-white/8"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm text-warm-white/70 bg-warm-white/8 rounded-full hover:bg-warm-white/15 transition-all duration-300 border border-warm-white/12"
                           >
                             <svg
                               className="w-4 h-4"
@@ -475,7 +493,7 @@ export default function DashboardView({
 
                   {/* Contribution Schedule */}
                   <ScrollReveal animation="fade-up" delay={0.2}>
-                    <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
+                    <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
                       <h3 className="font-serif text-lg font-bold text-warm-white mb-6 tracking-luxury">
                         Contribution Schedule
                       </h3>
@@ -540,7 +558,7 @@ export default function DashboardView({
                         {couple?.name || "You & Partner"}
                       </p>
                       {couple?.partner2Name ? (
-                        <p className="text-xs text-warm-white/25 mt-0.5 tracking-luxury">
+                        <p className="text-xs text-warm-white/50 mt-0.5 tracking-luxury">
                           {couple.partner2Name} linked
                         </p>
                       ) : couple?.invitationPending ? (
@@ -548,11 +566,11 @@ export default function DashboardView({
                           Invite pending
                         </p>
                       ) : couple ? (
-                        <p className="text-xs text-warm-white/25 mt-0.5 tracking-luxury">
+                        <p className="text-xs text-warm-white/50 mt-0.5 tracking-luxury">
                           Traveling party active
                         </p>
                       ) : (
-                        <p className="text-xs text-warm-white/25 mt-0.5 tracking-luxury">
+                        <p className="text-xs text-warm-white/50 mt-0.5 tracking-luxury">
                           Invite co-traveler
                         </p>
                       )}
@@ -576,7 +594,7 @@ export default function DashboardView({
                     <div className="mt-5 space-y-2">
                       {couple.invitationPending ? (
                         <>
-                          <p className="text-[11px] text-warm-white/20">
+                          <p className="text-[11px] text-warm-white/45">
                             Invitation expires{" "}
                             {couple.invitationExpires
                               ? new Date(couple.invitationExpires).toLocaleDateString()
@@ -647,7 +665,7 @@ export default function DashboardView({
               {/* Referral Credit */}
               {couple?.referralCode && (
                 <ScrollReveal animation="fade-left" delay={0.22}>
-                  <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
+                  <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
                     <h3 className="font-serif text-lg font-bold text-warm-white mb-4 tracking-luxury">
                       Future Travel Credit
                     </h3>
@@ -655,12 +673,12 @@ export default function DashboardView({
                       <span className="font-serif text-3xl font-bold text-amber">
                         {formatPrice(couple.referralCredit)}
                       </span>
-                      <span className="text-[10px] text-warm-white/20 tracking-wider uppercase">
+                      <span className="text-[10px] text-warm-white/50 tracking-wider uppercase">
                         Available
                       </span>
                     </div>
                     <div className="mt-4 p-3 bg-obsidian/40 rounded-xl border border-amber/5">
-                      <p className="text-[9px] font-mono tracking-[0.15em] text-warm-white/15 uppercase mb-1">
+                      <p className="text-[9px] font-mono tracking-[0.15em] text-warm-white/40 uppercase mb-1">
                         Your Referral Code
                       </p>
                       <div className="flex items-center gap-2">
@@ -672,13 +690,13 @@ export default function DashboardView({
                             const url = `${window.location.origin}/?ref=${couple.referralCode}`;
                             navigator.clipboard.writeText(url);
                           }}
-                          className="text-[10px] text-warm-white/20 hover:text-amber transition-colors"
+                          className="text-[10px] text-warm-white/50 hover:text-amber transition-colors"
                         >
                           Copy Link
                         </button>
                       </div>
                     </div>
-                    <p className="text-[10px] text-warm-white/15 mt-3 leading-relaxed">
+                    <p className="text-[10px] text-warm-white/40 mt-3 leading-relaxed">
                       Share your code. When a new couple signs up and books, you both earn $50 in future travel credit.
                     </p>
                   </div>
@@ -704,7 +722,7 @@ export default function DashboardView({
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="flex items-center justify-between py-3 text-sm text-warm-white/30 hover:text-ember transition-colors duration-300 group"
+                        className="flex items-center justify-between py-3 text-sm text-warm-white/55 hover:text-ember transition-colors duration-300 group"
                       >
                         <span>{link.label}</span>
                         <svg

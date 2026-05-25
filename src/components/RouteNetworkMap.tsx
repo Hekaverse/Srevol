@@ -31,7 +31,7 @@ export default function RouteNetworkMap() {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
             }`}
           >
-            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/20">
+            <span className="text-[10px] tracking-[0.3em] uppercase text-warm-white/45">
               Global Coverage
             </span>
             <p className="mt-2 font-serif text-lg text-warm-white/40">
@@ -53,7 +53,7 @@ export default function RouteNetworkMap() {
             ].map((item) => (
               <div key={item.tier} className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5" style={{ backgroundColor: item.color }} />
-                <span className="text-[9px] text-warm-white/20 tracking-wider uppercase">
+                <span className="text-[9px] text-warm-white/45 tracking-wider uppercase">
                   {item.label}
                 </span>
               </div>
@@ -71,7 +71,7 @@ export default function RouteNetworkMap() {
         </div>
 
         <p
-          className={`mt-6 text-center text-[10px] tracking-[0.2em] uppercase text-warm-white/10 transition-all duration-1000 ${
+          className={`mt-6 text-center text-[10px] tracking-[0.2em] uppercase text-warm-white/30 transition-all duration-1000 ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
           style={{ transitionDelay: "0.6s" }}

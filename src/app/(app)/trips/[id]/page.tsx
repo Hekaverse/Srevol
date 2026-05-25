@@ -240,7 +240,7 @@ export default async function TripDetailPage({ params }: Props) {
           <ScrollReveal animation="fade-up">
             <Link
               href="/trips"
-              className="inline-flex items-center gap-2 text-sm text-warm-white/30 hover:text-ember transition-colors duration-300 mb-8"
+              className="inline-flex items-center gap-2 text-sm text-warm-white/55 hover:text-ember transition-colors duration-300 mb-8"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -266,7 +266,7 @@ export default async function TripDetailPage({ params }: Props) {
               <h1 className="mt-4 font-serif text-4xl sm:text-5xl font-bold text-warm-white">
                 {pkg?.title || "Your Departure"}
               </h1>
-              <p className="mt-2 text-lg text-warm-white/30">
+              <p className="mt-2 text-lg text-warm-white/55">
                 {pkg?.destination} · {pkg?.duration} days ·{" "}
                 {formatPrice(booking.totalPrice)} for 2
               </p>
@@ -286,7 +286,7 @@ export default async function TripDetailPage({ params }: Props) {
               {/* Countdown */}
               {countdown && daysUntil !== null && (
                 <ScrollReveal animation="fade-up" delay={0.15}>
-                  <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
+                  <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
                     <h3 className="font-serif text-lg font-bold text-warm-white mb-4 tracking-luxury">
                       Countdown
                     </h3>
@@ -295,15 +295,15 @@ export default async function TripDetailPage({ params }: Props) {
                         <p className="font-serif text-4xl sm:text-5xl font-bold text-ember">
                           {daysUntil}
                         </p>
-                        <p className="text-xs text-warm-white/25 tracking-luxury uppercase mt-1">
+                        <p className="text-xs text-warm-white/50 tracking-luxury uppercase mt-1">
                           Days
                         </p>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm text-warm-white/40">
+                        <p className="text-sm text-warm-white/65">
                           {countdown.message}
                         </p>
-                        <p className="text-xs text-warm-white/20 mt-1">
+                        <p className="text-xs text-warm-white/45 mt-1">
                           Target:{" "}
                           {new Date(countdown.targetDate).toLocaleDateString(
                             "en-US",
@@ -331,13 +331,13 @@ export default async function TripDetailPage({ params }: Props) {
               {/* Payment Progress */}
               {paymentPlan && (
                 <ScrollReveal animation="fade-up" delay={0.25}>
-                  <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
+                  <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
                     <h3 className="font-serif text-lg font-bold text-warm-white mb-6 tracking-luxury">
                       Fare Commitment
                     </h3>
                     <div className="mb-6">
                       <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-warm-white/30">
+                        <span className="text-warm-white/55">
                           Fare Lock Progress
                         </span>
                         <span className="text-ember font-bold">{progress}%</span>
@@ -348,7 +348,7 @@ export default async function TripDetailPage({ params }: Props) {
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <div className="flex items-center justify-between text-xs text-warm-white/20 mt-2">
+                      <div className="flex items-center justify-between text-xs text-warm-white/45 mt-2">
                         <span>{formatPrice(paidAmount)} contributed</span>
                         <span>
                           {formatPrice(paymentPlan.totalAmount)} locked fare target
@@ -366,7 +366,7 @@ export default async function TripDetailPage({ params }: Props) {
                               className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
                                 payment.status === "COMPLETED"
                                   ? "bg-green-500/20 text-green-400"
-                                  : "bg-obsidian-muted/30 text-warm-white/20"
+                                  : "bg-obsidian-muted/30 text-warm-white/45"
                               }`}
                             >
                               {payment.status === "COMPLETED" ? (
@@ -381,7 +381,7 @@ export default async function TripDetailPage({ params }: Props) {
                               <p className="text-sm text-warm-white/60">
                                 Contribution {i + 1}
                               </p>
-                              <p className="text-[11px] text-warm-white/20">
+                              <p className="text-[11px] text-warm-white/45">
                                 Due{" "}
                                 {new Date(payment.dueDate).toLocaleDateString(
                                   "en-US",
@@ -398,7 +398,7 @@ export default async function TripDetailPage({ params }: Props) {
                               className={`text-[10px] tracking-wider uppercase ${
                                 payment.status === "COMPLETED"
                                   ? "text-green-400"
-                                  : "text-warm-white/20"
+                                  : "text-warm-white/45"
                               }`}
                             >
                               {payment.status}
@@ -414,11 +414,11 @@ export default async function TripDetailPage({ params }: Props) {
               {/* Package Details */}
               {pkg?.description && (
                 <ScrollReveal animation="fade-up" delay={0.3}>
-                  <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
+                  <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6 sm:p-8">
                     <h3 className="font-serif text-lg font-bold text-warm-white mb-4 tracking-luxury">
                       About This Route
                     </h3>
-                    <p className="text-sm text-warm-white/40 leading-relaxed">
+                    <p className="text-sm text-warm-white/65 leading-relaxed">
                       {pkg.description}
                     </p>
                   </div>
@@ -430,30 +430,30 @@ export default async function TripDetailPage({ params }: Props) {
             <div className="space-y-6">
               {/* Quick Stats */}
               <ScrollReveal animation="fade-left" delay={0.15}>
-                <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
+                <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
                   <h3 className="font-serif text-lg font-bold text-warm-white mb-6 tracking-luxury">
                     Itinerary Details
                   </h3>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-warm-white/30">Route</span>
-                      <span className="text-sm text-warm-white/70">
+                      <span className="text-sm text-warm-white/55">Route</span>
+                      <span className="text-sm text-warm-white/90">
                         {pkg?.destination || "TBD"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-warm-white/30">Duration</span>
-                      <span className="text-sm text-warm-white/70">
+                      <span className="text-sm text-warm-white/55">Duration</span>
+                      <span className="text-sm text-warm-white/90">
                         {pkg?.duration} days
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-warm-white/30">Travelers</span>
-                      <span className="text-sm text-warm-white/70">2</span>
+                      <span className="text-sm text-warm-white/55">Travelers</span>
+                      <span className="text-sm text-warm-white/90">2</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-warm-white/30">Reserved On</span>
-                      <span className="text-sm text-warm-white/70">
+                      <span className="text-sm text-warm-white/55">Reserved On</span>
+                      <span className="text-sm text-warm-white/90">
                         {new Date(booking.createdAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -468,7 +468,7 @@ export default async function TripDetailPage({ params }: Props) {
               {/* Actions */}
               {booking.status !== "CANCELLED" && (
                 <ScrollReveal animation="fade-left" delay={0.25}>
-                  <div className="bg-obsidian-light/20 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
+                  <div className="bg-obsidian-light/50 backdrop-blur-sm rounded-3xl border border-obsidian-muted/20 p-6">
                     <h3 className="font-serif text-lg font-bold text-warm-white mb-4 tracking-luxury">
                       Actions
                     </h3>
@@ -496,7 +496,7 @@ export default async function TripDetailPage({ params }: Props) {
                         Rebook Departure
                       </button>
                     </div>
-                    <p className="text-[11px] text-warm-white/15 mt-3 text-center">
+                    <p className="text-[11px] text-warm-white/40 mt-3 text-center">
                       Rebooking converts to future travel credit minus 5% fee.
                     </p>
                   </div>
