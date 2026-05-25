@@ -7,11 +7,19 @@ export default function LoadingScreen() {
   const [visibleChars, setVisibleChars] = useState(0);
   const text = "SREVOL";
 
+  // Only play boot animation once per browser session
+  const alreadyBooted = typeof window !== "undefined" && sessionStorage.getItem("srevol-booted");
+
   useEffect(() => {
+    if (alreadyBooted) {
+      setPhase("done");
+      return;
+    }
+
     // Start in letterbox, then type
     const t1 = setTimeout(() => setPhase("typing"), 400);
     return () => clearTimeout(t1);
-  }, []);
+  }, [alreadyBooted]);
 
   useEffect(() => {
     if (phase !== "typing") return;
@@ -35,11 +43,17 @@ export default function LoadingScreen() {
       setTimeout(() => setPhase("expand"), 900);
     }
     if (phase === "expand") {
-      setTimeout(() => setPhase("done"), 1200);
+      const t = setTimeout(() => {
+        setPhase("done");
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("srevol-booted", "true");
+        }
+      }, 1200);
+      return () => clearTimeout(t);
     }
   }, [phase]);
 
-  if (phase === "done") return null;
+  if (phase === "done" || alreadyBooted) return null;
 
   const isLetterbox = phase === "letterbox" || phase === "typing" || phase === "line";
   const isExpanding = phase === "expand";

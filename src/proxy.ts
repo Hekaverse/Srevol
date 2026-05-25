@@ -88,7 +88,7 @@ export default async function proxy(request: NextRequest) {
   // ─────────────────────────────────────────────
   if (pathname === "/login" || pathname === "/register") {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
