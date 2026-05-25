@@ -3,84 +3,69 @@
 import { useEffect, useState } from "react";
 
 export default function LoadingScreen() {
-  const [phase, setPhase] = useState<"letterbox" | "typing" | "line" | "expand" | "done">("letterbox");
+  const [phase, setPhase] = useState<"hidden" | "letterbox" | "typing" | "line" | "expand" | "done">("hidden");
   const [visibleChars, setVisibleChars] = useState(0);
   const text = "SREVOL";
 
-  // Only play boot animation once per browser session
-  const alreadyBooted = typeof window !== "undefined" && sessionStorage.getItem("srevol-booted");
-
+  // Defer ALL sessionStorage logic until after mount to avoid hydration mismatch.
+  // Server renders "hidden" (nothing). Client checks storage after mount.
   useEffect(() => {
-    if (alreadyBooted) {
+    if (sessionStorage.getItem("srevol-booted")) {
       setPhase("done");
       return;
     }
+    setPhase("letterbox");
+  }, []);
 
-    // Start in letterbox, then type
-    const t1 = setTimeout(() => setPhase("typing"), 400);
-    return () => clearTimeout(t1);
-  }, [alreadyBooted]);
+  useEffect(() => {
+    if (phase !== "letterbox") return;
+    const t = setTimeout(() => setPhase("typing"), 300);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "typing") return;
-
-    const typeInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setVisibleChars((prev) => {
         if (prev >= text.length) {
-          clearInterval(typeInterval);
-          setTimeout(() => setPhase("line"), 300);
+          clearInterval(interval);
+          setTimeout(() => setPhase("line"), 250);
           return prev;
         }
         return prev + 1;
       });
-    }, 150);
-
-    return () => clearInterval(typeInterval);
+    }, 120);
+    return () => clearInterval(interval);
   }, [phase]);
 
   useEffect(() => {
     if (phase === "line") {
-      setTimeout(() => setPhase("expand"), 900);
+      const t = setTimeout(() => setPhase("expand"), 700);
+      return () => clearTimeout(t);
     }
     if (phase === "expand") {
       const t = setTimeout(() => {
         setPhase("done");
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("srevol-booted", "true");
-        }
-      }, 1200);
+        sessionStorage.setItem("srevol-booted", "true");
+      }, 1000);
       return () => clearTimeout(t);
     }
   }, [phase]);
 
-  if (phase === "done" || alreadyBooted) return null;
+  if (phase === "hidden" || phase === "done") return null;
 
   const isLetterbox = phase === "letterbox" || phase === "typing" || phase === "line";
   const isExpanding = phase === "expand";
 
   return (
     <div
-      className={`fixed inset-0 z-[300] bg-obsidian flex flex-col items-center justify-center transition-all duration-[1200ms] ease-expo ${
+      className={`fixed inset-0 z-[300] bg-obsidian flex flex-col items-center justify-center transition-all duration-1000 ease-expo ${
         isExpanding ? "opacity-0" : "opacity-100"
       }`}
       style={{
-        clipPath: isLetterbox
-          ? "inset(30% 10% 30% 10%)"
-          : isExpanding
-          ? "inset(0% 0% 0% 0%)"
-          : "inset(0% 0% 0% 0%)",
+        clipPath: isLetterbox ? "inset(30% 10% 30% 10%)" : "inset(0% 0% 0% 0%)",
       }}
     >
-      {/* Film grain overlay on loading screen */}
-      <div
-        className="absolute inset-0 opacity-[0.05] pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "128px 128px",
-        }}
-      />
-
       {/* Letterbox bars */}
       {isLetterbox && (
         <>
@@ -93,7 +78,6 @@ export default function LoadingScreen() {
 
       {/* Center content */}
       <div className="relative z-20 text-center">
-        {/* Typing text */}
         <div className="font-serif text-5xl sm:text-6xl tracking-[0.4em] text-warm-white">
           {text.split("").map((char, i) => (
             <span
@@ -109,23 +93,18 @@ export default function LoadingScreen() {
           ))}
         </div>
 
-        {/* Drawing line */}
         <div className="mt-8 mx-auto w-40 h-px bg-warm-white/10 overflow-hidden">
           <div
             className="h-full bg-warm-white/50 transition-transform duration-700 ease-expo"
             style={{
-              transform:
-                phase === "line" || phase === "expand"
-                  ? "scaleX(1)"
-                  : "scaleX(0)",
+              transform: phase === "line" || phase === "expand" ? "scaleX(1)" : "scaleX(0)",
               transformOrigin: "left",
             }}
           />
         </div>
 
-        {/* Subtle caption */}
         <p
-          className={`mt-6 text-[9px] tracking-[0.4em] uppercase text-warm-white/20 transition-opacity duration-500 ${
+          className={`mt-6 text-[9px] tracking-[0.4em] uppercase text-warm-white/30 transition-opacity duration-500 ${
             phase === "line" || phase === "expand" ? "opacity-100" : "opacity-0"
           }`}
         >
