@@ -88,7 +88,10 @@ export default async function proxy(request: NextRequest) {
   // ─────────────────────────────────────────────
   if (pathname === "/login" || pathname === "/register") {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/", request.url));
+      // If there's a callbackUrl, respect it. Otherwise go home.
+      const callbackUrl = request.nextUrl.searchParams.get("callbackUrl");
+      const destination = callbackUrl || "/";
+      return NextResponse.redirect(new URL(destination, request.url));
     }
   }
 

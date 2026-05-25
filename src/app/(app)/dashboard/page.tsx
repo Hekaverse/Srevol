@@ -11,17 +11,28 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const data = await getDashboardData();
-  if (!data) {
-    redirect("/login");
+  // Always render the dashboard for authenticated users.
+  // If data fetching fails, show empty state — never bounce them to login.
+  let data;
+  try {
+    data = await getDashboardData();
+  } catch {
+    data = null;
   }
 
   return (
     <DashboardView
-      user={data.user}
-      couple={data.couple}
-      buckets={data.buckets}
-      bookings={data.bookings}
+      user={
+        data?.user ?? {
+          id: session.user.id,
+          email: session.user.email ?? "",
+          name: session.user.name ?? null,
+          role: (session.user as any).role ?? "USER",
+        }
+      }
+      couple={data?.couple ?? null}
+      buckets={data?.buckets ?? []}
+      bookings={data?.bookings ?? []}
     />
   );
 }
